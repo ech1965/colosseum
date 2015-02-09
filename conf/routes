@@ -148,5 +148,13 @@ POST          /api/communicationChannel/:id        @controllers.CommunicationCha
 DELETE        /api/communicationChannel/:id        @controllers.CommunicationChannelController.delete(id: Long)
 
 
+#PaasageModel
+GET           /api/model                           @controllers.PaasageModelController.list()
+GET           /api/model/:id                       @controllers.PaasageModelController.get(id: Long)
+PUT           /api/model                           @controllers.PaasageModelController.create()
+POST          /api/model/:id                       @controllers.PaasageModelController.update(id: Long)
+DELETE        /api/model/:id                       @controllers.PaasageModelController.delete(id: Long)
+
+
 # Map static resources from the /public folder to the /assets URL path
 GET           /assets/*file                        controllers.Assets.at(path="/public", file)
