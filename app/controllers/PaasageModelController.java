@@ -34,7 +34,7 @@ package controllers;
         import play.mvc.Security;
 
 /**
- * Implementation of the GenericApiController for the PaasageModel model class.
+ * Implementation of the GenericApiController for the PaaSageModel model class.
  *
  * @author Daniel Baur
  */
