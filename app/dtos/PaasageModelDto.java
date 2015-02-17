@@ -43,15 +43,24 @@ public class PaasageModelDto extends NamedDto {
     public List<ValidationError> validateNotNull() {
         List<ValidationError> errors = new ArrayList<>();
 
-        if(this.state.isEmpty()){
+        if(this.state == null){
+            errors.add(new ValidationError("state", "State must not be empty"));
+        }
+        else if(this.state.isEmpty()){
             errors.add(new ValidationError("state", "State must not be empty"));
         }
 
-        if(this.subState.isEmpty()){
+        if(this.subState == null){
+            errors.add(new ValidationError("subState", "SubState must not be empty"));
+        }
+        else if(this.subState.isEmpty()){
             errors.add(new ValidationError("subState", "SubState must not be empty"));
         }
 
-        if(this.action.isEmpty()){
+        if(this.action == null){
+            errors.add(new ValidationError("action", "Action must not be empty"));
+        }
+        else if(this.action.isEmpty()){
             errors.add(new ValidationError("action", "Action must not be empty"));
         }
         return errors;

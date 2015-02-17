@@ -26,6 +26,7 @@ package controllers;
         import com.google.inject.Inject;
         import controllers.generic.GenericApiController;
         import controllers.security.SecuredSession;
+        import controllers.security.SecuredToken;
         import dtos.PaasageModelDto;
         import dtos.convert.api.ModelDtoConversionService;
         import models.PaasageModel;
@@ -38,7 +39,7 @@ package controllers;
  *
  * @author Daniel Baur
  */
-@Security.Authenticated(SecuredSession.class)
+@Security.Authenticated(SecuredToken.class)
 public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
 
     /**
