@@ -53,6 +53,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Security.Authenticated(SecuredSessionOrToken.class)
 public abstract class GenericApiController<T extends Model, S extends Dto> extends Controller {
 
+    protected enum BeforeAfterResult { CONTINUE, ABORT }
+
+    protected BeforeAfterResult beforeUpdate(T current, S wanted)
+    {
+        return BeforeAfterResult.CONTINUE;
+    }
+
+    protected BeforeAfterResult afterUpdate(T current, S wanted)
+    {
+        return BeforeAfterResult.CONTINUE;
+    }
+
     private final ModelServiceInterface<T> modelService;
     private final ModelDtoConversionService conversionService;
     private final Class<T> type;
@@ -239,9 +251,16 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
 
         entity = this.conversionService.toModel(filledForm.get(), entity, this.type);
 
-        this.modelService.save(entity);
+        BeforeAfterResult shouldIGo = beforeUpdate(entity, filledForm.get());
 
-        return ok();
+        if ( shouldIGo == BeforeAfterResult.CONTINUE) {
+            this.modelService.save(entity);
+            return ok();
+        }
+        else
+        {
+            return badRequest("Transition error");
+        }
     }
 
     /**

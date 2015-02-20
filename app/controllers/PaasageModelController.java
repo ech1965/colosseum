@@ -32,6 +32,7 @@ package controllers;
         import models.service.api.PaasageModelServiceInterface;
         import play.mvc.Security;
 
+
 /**
  * Implementation of the GenericApiController for the PaaSageModel model class.
  *
@@ -55,5 +56,11 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     @Override
     protected String getSelfRoute(Long id) {
         return controllers.routes.PaasageModelController.get(id).absoluteURL(request());
+    }
+
+    @Override
+    protected BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
+    {
+        return BeforeAfterResult.CONTINUE;
     }
 }
