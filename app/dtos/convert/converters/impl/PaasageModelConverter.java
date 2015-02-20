@@ -16,7 +16,17 @@ public class PaasageModelConverter extends BaseConverter<PaasageModel, PaasageMo
      * @return the merged paasageModel object.
      */
     protected PaasageModel setDto(PaasageModel paasageModel, PaasageModelDto paasageModelDto) {
+        checkNotNull(paasageModelDto);
+        checkNotNull(paasageModelDto.name);
+        checkNotNull(paasageModelDto.action);
+        checkNotNull(paasageModelDto.state);
+        checkNotNull(paasageModelDto.subState);
+
         paasageModel.setName(paasageModelDto.name);
+        paasageModel.setAction(paasageModelDto.action);
+        paasageModel.setState(paasageModelDto.state);
+        paasageModel.setSubState(paasageModelDto.subState);
+
         return paasageModel;
     }
 
@@ -30,6 +40,7 @@ public class PaasageModelConverter extends BaseConverter<PaasageModel, PaasageMo
     public PaasageModel toModel(PaasageModelDto paasageModelDto, PaasageModel model) {
         checkNotNull(paasageModelDto);
         checkNotNull(model);
+        // TODO: Ici on a accès à l'ancienne et à la nouvelle valeur de la resource
         return setDto(model, paasageModelDto);
     }
 

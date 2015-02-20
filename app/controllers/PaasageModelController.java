@@ -25,13 +25,11 @@ package controllers;
 
         import com.google.inject.Inject;
         import controllers.generic.GenericApiController;
-        import controllers.security.SecuredSession;
         import controllers.security.SecuredToken;
         import dtos.PaasageModelDto;
         import dtos.convert.api.ModelDtoConversionService;
         import models.PaasageModel;
         import models.service.api.PaasageModelServiceInterface;
-        import play.mvc.Result;
         import play.mvc.Security;
 
 /**

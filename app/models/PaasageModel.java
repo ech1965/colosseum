@@ -4,8 +4,6 @@ import models.generic.NamedModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
