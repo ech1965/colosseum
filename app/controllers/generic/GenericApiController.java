@@ -18,7 +18,6 @@
 
 package controllers.generic;
 
-import controllers.security.SecuredSession;
 import controllers.security.SecuredSessionOrToken;
 import dtos.convert.api.ModelDtoConversionService;
 import dtos.generic.api.Dto;

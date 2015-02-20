@@ -21,12 +21,14 @@ package controllers.security;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import models.FrontendUser;
-import models.service.api.ApiAccessTokenServiceInterface;
-import models.service.api.FrontendUserServiceInterface;
+import models.service.api.ApiAccessTokenService;
+import models.service.api.FrontendUserService;
 import play.db.jpa.JPA;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
+
+import javax.persistence.EntityManager;
 
 /**
  * Created by daniel on 19.12.14.
@@ -37,10 +39,10 @@ public class SecuredToken extends Security.Authenticator {
     public static class References {
 
         @Inject
-        public static Provider<ApiAccessTokenServiceInterface> apiAccessTokenServiceProvider;
+        public static Provider<ApiAccessTokenService> apiAccessTokenServiceProvider;
 
         @Inject
-        public static Provider<FrontendUserServiceInterface> frontendUserServiceInterfaceProvider;
+        public static Provider<FrontendUserService> frontendUserServiceInterfaceProvider;
     }
 
     @Override
@@ -62,26 +64,39 @@ public class SecuredToken extends Security.Authenticator {
             return null;
         }
 
+        //remember the entity manager
+        //workaround for https://github.com/playframework/playframework/pull/3388
+        final EntityManager em = JPA.em();
         final FrontendUser frontendUser;
         try {
             frontendUser = JPA.withTransaction(() -> References.frontendUserServiceInterfaceProvider.get().getById(userId));
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+        //workaround continue. Bind the old one.
+        JPA.bindForCurrentThread(em);
 
         if (frontendUser == null) {
             return null;
         }
 
+        //remember the entity manager
+        //workaround for https://github.com/playframework/playframework/pull/3388
+        final EntityManager em1 = JPA.em();
+        final String mail;
         try {
             if (JPA.withTransaction(() -> References.apiAccessTokenServiceProvider.get().isValid(token, frontendUser))) {
-                return frontendUser.getMail();
+                mail = frontendUser.getMail();
+            } else {
+                mail = null;
             }
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
+        //workaround continue. Bind the old one.
+        JPA.bindForCurrentThread(em1);
 
-        return null;
+        return mail;
     }
 
     @Override
