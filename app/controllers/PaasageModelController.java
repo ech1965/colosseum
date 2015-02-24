@@ -23,14 +23,14 @@
 
 package controllers;
 
-        import com.google.inject.Inject;
-        import controllers.generic.GenericApiController;
-        import controllers.security.SecuredToken;
-        import dtos.PaasageModelDto;
-        import dtos.convert.api.ModelDtoConversionService;
-        import models.PaasageModel;
-        import models.service.api.PaasageModelServiceInterface;
-        import play.mvc.Security;
+import com.google.inject.Inject;
+import controllers.generic.GenericApiController;
+import controllers.security.SecuredToken;
+import dtos.PaasageModelDto;
+import dtos.convert.api.ModelDtoConversionService;
+import models.PaasageModel;
+import models.service.api.PaasageModelServiceInterface;
+import play.mvc.Security;
 
 
 /**
@@ -40,6 +40,9 @@ package controllers;
  */
 @Security.Authenticated(SecuredToken.class)
 public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
+
+
+
 
     /**
      * Constructor.
@@ -61,6 +64,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     @Override
     protected BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
     {
+
         return BeforeAfterResult.CONTINUE;
     }
 }
