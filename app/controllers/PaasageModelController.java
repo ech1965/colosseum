@@ -41,14 +41,11 @@ import play.mvc.Security;
 @Security.Authenticated(SecuredToken.class)
 public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
 
-
-
-
     /**
      * Constructor.
      *
-     * @param PaasageModelService      Model service for PaasageModel model.
-     * @param conversionService Model <-> DTO conversion service.
+     * @param PaasageModelService       Model service for PaasageModel model.
+     * @param conversionService         Model <-> DTO conversion service.
      */
     @Inject
     protected PaasageModelController(PaasageModelServiceInterface PaasageModelService, ModelDtoConversionService conversionService) {

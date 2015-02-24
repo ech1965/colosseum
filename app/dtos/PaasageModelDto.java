@@ -19,10 +19,12 @@
 
 package dtos;
 import dtos.generic.impl.NamedDto;
+import models.PaasageModel;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import java.util.List;
 import java.util.ArrayList;
+
 
 
 public class PaasageModelDto extends NamedDto {
@@ -43,27 +45,46 @@ public class PaasageModelDto extends NamedDto {
     public List<ValidationError> validateNotNull() {
         List<ValidationError> errors = new ArrayList<>();
 
-        if(this.state == null){
-            errors.add(new ValidationError("state", "State must not be empty"));
-        }
-        else if(this.state.isEmpty()){
-            errors.add(new ValidationError("state", "State must not be empty"));
-        }
-
-        if(this.subState == null){
-            errors.add(new ValidationError("subState", "SubState must not be empty"));
-        }
-        else if(this.subState.isEmpty()){
-            errors.add(new ValidationError("subState", "SubState must not be empty"));
-        }
-
-        if(this.action == null){
-            errors.add(new ValidationError("action", "Action must not be empty"));
-        }
-        else if(this.action.isEmpty()){
-            errors.add(new ValidationError("action", "Action must not be empty"));
-        }
+        validateState(errors);
+        validateAction(errors);
+        validateSubState(errors);
         return errors;
+    }
+
+    private void validateSubState(List<ValidationError> errors) {
+        if(this.subState == null){
+            errors.add(new ValidationError("subState", "SubState must not be null"));
+            return;
+        }
+        if (this.subState.isEmpty()) {
+            errors.add(new ValidationError("subState", "SubState must not be empty"));
+        }
+
+    }
+    private void validateState(List<ValidationError> errors)
+    {
+        if(this.state == null){
+            errors.add(new ValidationError("state", "State must not be null"));
+            return;
+        }
+        try {
+            PaasageModel.State unused = PaasageModel.State.fromString(state);
+
+        } catch(IllegalArgumentException ex) {
+            errors.add(new ValidationError("state", "State does not map to a valid enum value"));
+        }
+    }
+    private void validateAction(List<ValidationError> errors)
+    {
+        if(this.state == null){
+            errors.add(new ValidationError("action", "State must not be null"));
+            return;
+        }
+        try {
+            PaasageModel.Action unused = PaasageModel.Action.fromString(action);
+        } catch(IllegalArgumentException ex) {
+            errors.add(new ValidationError("action", "State does not map to a valid enum value"));
+        }
     }
 }
 

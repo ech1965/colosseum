@@ -4,6 +4,8 @@ import models.generic.NamedModel;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -14,19 +16,42 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Entity
 public class PaasageModel extends NamedModel{
 
-    public enum State  { NEW, CREATED, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING}
+    /**
+     * A common method for all enums since they can't have another base class
+     * @param <T> Enum type
+     * @param c enum type. All enums must be all caps.
+     * @param string case insensitive
+     * @return corresponding enum, or null
+     */
+    private static <T extends Enum<T>> T getEnumFromString(Class<T> c, String string) {
+        if( c != null && string != null ) {
+            return Enum.valueOf(c, string.trim().toUpperCase());
+        }
+        return null;
+    }
 
-    public enum Trigger {
+    public enum State  {
+        NEW, CREATED, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING;
+        public static State  fromString(String name) {
+            return getEnumFromString(State.class, name);
+        }
+    }
+
+    public enum Action {
+        NONE,                            // If no arrow in state diagram, don't do anything
         CREATE,                          // Resource being created by user
         UPLOAD_XMI,                      // XMI being uploaded by user
         START_REASONNING,                // Reasoning started by user
-        REASONNED_NO_PLAN,               // Reason outcome: NO DEPLOYEMENT PLAN (by PaaSage)
-        REASONNED_ONE_PLAN,              // Reason outcome:  One Deployement plan (by PaaSage)
-        REASONNED_MULTI_PLANS,           // Reason outcome: Multiple deployement plans (by PaaSage)
+        REASONNED_NO_PLAN,               // Reason outcome: NO Deployment PLAN (by PaaSage)
+        REASONNED_ONE_PLAN,              // Reason outcome:  One Deployment plan (by PaaSage)
+        REASONNED_MULTI_PLANS,           // Reason outcome: Multiple Deployment plans (by PaaSage)
         CHOOSE_PLAN,                     // Plan being chosen by user
         DEPLOY,                          // Deployment started by user
         FINISH_DEPLOYMENT,               // Deployment finished ( by PaaSage)
-        RUN                              // Application start requested by PaaSage
+        RUN;                              // Application start requested by PaaSage
+        public static Action  fromString(String name) {
+            return getEnumFromString(Action.class, name);
+        }
     }
 
 
@@ -46,7 +71,8 @@ public class PaasageModel extends NamedModel{
      * State of the PaaSage Model.
      */
     @Column(nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
     /**
      * Sub State of the PaaSage Model.
@@ -58,17 +84,24 @@ public class PaasageModel extends NamedModel{
      * Current Executing Action of the PaaSage Model.
      */
     @Column(nullable = false)
-    private String action;
+    @Enumerated(EnumType.STRING)
+    private Action action;
 
 
-    public String getState() {
+    public State getState() {
         return state;
+    }
+
+    public void setState(State state) {
+        checkNotNull(state);
+        this.state = state;
     }
 
     public void setState(String state) {
         checkNotNull(state);
-        this.state = state;
+        this.state = State.fromString(state);
     }
+
 
     public String getSubState() {
         return subState;
@@ -79,13 +112,18 @@ public class PaasageModel extends NamedModel{
         this.subState = subState;
     }
 
-    public String getAction() {
+    public Action getAction() {
         return action;
+    }
+
+    public void setAction(Action action) {
+        checkNotNull(action);
+        this.action = action;
     }
 
     public void setAction(String action) {
         checkNotNull(action);
-        this.action = action;
+        this.action = Action.fromString(action);
     }
 
 }
