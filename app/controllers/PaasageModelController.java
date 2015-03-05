@@ -36,7 +36,7 @@ import play.mvc.Security;
 /**
  * Implementation of the GenericApiController for the PaaSageModel model class.
  *
- * @author Daniel Baur
+ * @author Etienne Charlier
  */
 @Security.Authenticated(SecuredToken.class)
 public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
