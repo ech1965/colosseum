@@ -76,7 +76,6 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
                 .permit(PaasageModel.Action.RUN, PaasageModel.State.RUNNING);
     }
 
-
     /**
      * Constructor.
      *
