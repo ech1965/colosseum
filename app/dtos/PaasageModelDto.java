@@ -96,7 +96,7 @@ public class PaasageModelDto extends NamedDto {
         try {
             PaasageModel.Action unused = PaasageModel.Action.fromString(action);
         } catch(IllegalArgumentException ex) {
-            errors.add(new ValidationError("action", "State does not map to a valid enum value"));
+            errors.add(new ValidationError("action", "Action does not map to a valid enum value"));
         }
     }
 }

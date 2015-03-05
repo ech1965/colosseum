@@ -249,12 +249,12 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
             return badRequest(filledForm.errorsAsJson());
         }
 
-        entity = this.conversionService.toModel(filledForm.get(), entity, this.type);
-
         BeforeAfterResult shouldIGo = beforeUpdate(entity, filledForm.get());
 
         if ( shouldIGo == BeforeAfterResult.CONTINUE) {
             this.modelService.save(entity);
+            entity = this.conversionService.toModel(filledForm.get(), entity, this.type);
+
             return ok();
         }
         else
