@@ -31,14 +31,14 @@ public class PaasageModel extends NamedModel{
     }
 
     public enum State  {
-        NEW, CREATED, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING;
+        NEW, UNCHANGED, CREATED, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING;
         public static State  fromString(String name) {
             return getEnumFromString(State.class, name);
         }
     }
 
     public enum Action {
-        NONE,                            // If no arrow in state diagram, don't do anything
+        UNCHANGED,                       // If no arrow in state diagram, don't do anything
         CREATE,                          // Resource being created by user
         UPLOAD_XMI,                      // XMI being uploaded by user
         START_REASONNING,                // Reasoning started by user
@@ -49,6 +49,7 @@ public class PaasageModel extends NamedModel{
         DEPLOY,                          // Deployment started by user
         FINISH_DEPLOYMENT,               // Deployment finished ( by PaaSage)
         RUN;                              // Application start requested by PaaSage
+
         public static Action  fromString(String name) {
             return getEnumFromString(Action.class, name);
         }

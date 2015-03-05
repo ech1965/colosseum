@@ -28,7 +28,8 @@ libraryDependencies ++= Seq(
   "com.google.inject.extensions" % "guice-multibindings" % "3.0",
   "com.google.guava" % "guava" % "18.0",
   "commons-codec" % "commons-codec" % "1.10",
-  "com.google.code.findbugs" % "jsr305" % "1.3.9"
+  "com.google.code.findbugs" % "jsr305" % "1.3.9",
+  "com.github.oxo42" % "stateless4j" % "2.5.0"
 )
 
 TwirlKeys.templateImports += "dtos._"
