@@ -33,13 +33,26 @@ public class PaasageModelDto extends NamedDto {
         super();
     }
 
-    public PaasageModelDto(String name) {
+    public PaasageModelDto(String name, PaasageModel.State state, String subState, PaasageModel.Action action) {
         super(name);
+        this.state    = state.toString();
+        this.subState = subState;
+        this.action   = action.toString();
     }
 
     public String state;
     public String subState;
     public String action;
+
+    public PaasageModel.State getState()
+    {
+        return PaasageModel.State.fromString(state);
+    }
+
+    public PaasageModel.Action getAction()
+    {
+        return PaasageModel.Action.fromString(action);
+    }
 
     @Override
     public List<ValidationError> validateNotNull() {
@@ -76,8 +89,8 @@ public class PaasageModelDto extends NamedDto {
     }
     private void validateAction(List<ValidationError> errors)
     {
-        if(this.state == null){
-            errors.add(new ValidationError("action", "State must not be null"));
+        if(this.action == null){
+            errors.add(new ValidationError("action", "Action must not be null"));
             return;
         }
         try {
