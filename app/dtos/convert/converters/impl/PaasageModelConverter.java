@@ -21,11 +21,13 @@ public class PaasageModelConverter extends BaseConverter<PaasageModel, PaasageMo
         checkNotNull(paasageModelDto.action);
         checkNotNull(paasageModelDto.state);
         checkNotNull(paasageModelDto.subState);
+        checkNotNull(paasageModelDto.xmiModelEncoded);
 
         if (! paasageModelDto.name.equalsIgnoreCase("UNCHANGED") )     paasageModel.setName(paasageModelDto.name);
         if (! paasageModelDto.action.equalsIgnoreCase(PaasageModel.Action.UNCHANGED.toString()))   paasageModel.setAction(paasageModelDto.action);
         if (! paasageModelDto.state.equalsIgnoreCase( PaasageModel.State.UNCHANGED.toString() ) )    paasageModel.setState(paasageModelDto.state);
         if (! paasageModelDto.subState.equalsIgnoreCase("UNCHANGED")) paasageModel.setSubState(paasageModelDto.subState);
+        if (! paasageModelDto.xmiModelEncoded.equalsIgnoreCase("UNCHANGED")) paasageModel.setXmiModelEncoded(paasageModelDto.xmiModelEncoded);
 
         return paasageModel;
     }
@@ -40,13 +42,12 @@ public class PaasageModelConverter extends BaseConverter<PaasageModel, PaasageMo
     public PaasageModel toModel(PaasageModelDto paasageModelDto, PaasageModel model) {
         checkNotNull(paasageModelDto);
         checkNotNull(model);
-        // TODO: Ici on a accès à l'ancienne et à la nouvelle valeur de la resource
         return setDto(model, paasageModelDto);
     }
 
     @Override
     public PaasageModelDto toDto(PaasageModel paasageModel) {
         checkNotNull(paasageModel);
-        return new PaasageModelDto(paasageModel.getName(), paasageModel.getState(), paasageModel.getSubState(), paasageModel.getAction());
+        return new PaasageModelDto(paasageModel.getName(), paasageModel.getState(), paasageModel.getSubState(), paasageModel.getAction(),paasageModel.getXmiModelEncoded());
     }
 }

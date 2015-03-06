@@ -2,10 +2,7 @@ package models;
 
 import models.generic.NamedModel;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -88,6 +85,11 @@ public class PaasageModel extends NamedModel{
     @Enumerated(EnumType.STRING)
     private Action action;
 
+    /**
+     * XMI file as uploaded by the api Caller (must be Base64 encoded)
+     */
+    @Lob
+    private String xmiModelEncoded;
 
     public State getState() {
         return state;
@@ -102,7 +104,6 @@ public class PaasageModel extends NamedModel{
         checkNotNull(state);
         this.state = State.fromString(state);
     }
-
 
     public String getSubState() {
         return subState;
@@ -127,4 +128,11 @@ public class PaasageModel extends NamedModel{
         this.action = Action.fromString(action);
     }
 
+    public String getXmiModelEncoded() {
+        return xmiModelEncoded;
+    }
+
+    public void setXmiModelEncoded(String xmiModelEncoded) {
+        this.xmiModelEncoded = xmiModelEncoded;
+    }
 }

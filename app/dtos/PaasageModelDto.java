@@ -33,16 +33,18 @@ public class PaasageModelDto extends NamedDto {
         super();
     }
 
-    public PaasageModelDto(String name, PaasageModel.State state, String subState, PaasageModel.Action action) {
+    public PaasageModelDto(String name, PaasageModel.State state, String subState, PaasageModel.Action action, String xmiModelEncoded) {
         super(name);
         this.state    = state.toString();
         this.subState = subState;
         this.action   = action.toString();
+        this.xmiModelEncoded = xmiModelEncoded;
     }
 
     public String state;
     public String subState;
     public String action;
+    public String xmiModelEncoded;
 
     public PaasageModel.State getState()
     {
@@ -61,6 +63,7 @@ public class PaasageModelDto extends NamedDto {
         validateState(errors);
         validateAction(errors);
         validateSubState(errors);
+        validateXmiModelEncoded(errors);
         return errors;
     }
 
@@ -99,5 +102,16 @@ public class PaasageModelDto extends NamedDto {
             errors.add(new ValidationError("action", "Action does not map to a valid enum value"));
         }
     }
+    private void validateXmiModelEncoded(List<ValidationError> errors)
+    {
+        if(this.xmiModelEncoded == null){
+            errors.add(new ValidationError("xmiModelEncoded", "XmiModelEncoded must not be null"));
+            return;
+        }
+        if (this.subState.isEmpty()) {
+            errors.add(new ValidationError("xmiModelEncoded", "XmiModelEncoded must not be empty"));
+        }
+    }
+
 }
 
