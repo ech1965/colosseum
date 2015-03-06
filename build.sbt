@@ -29,7 +29,8 @@ libraryDependencies ++= Seq(
   "com.google.guava" % "guava" % "18.0",
   "commons-codec" % "commons-codec" % "1.10",
   "com.google.code.findbugs" % "jsr305" % "1.3.9",
-  "com.github.oxo42" % "stateless4j" % "2.5.0"
+  "com.github.oxo42" % "stateless4j" % "2.5.0",
+  "com.rabbitmq" % "amqp-client" %  "3.4.4"
 )
 
 TwirlKeys.templateImports += "dtos._"
