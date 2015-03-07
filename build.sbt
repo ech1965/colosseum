@@ -30,8 +30,11 @@ libraryDependencies ++= Seq(
   "commons-codec" % "commons-codec" % "1.10",
   "com.google.code.findbugs" % "jsr305" % "1.3.9",
   "com.github.oxo42" % "stateless4j" % "2.5.0",
-  "com.rabbitmq" % "amqp-client" %  "3.4.4"
+  "commons-lang" % "commons-lang" % "2.6",
+  "com.rabbitmq" % "amqp-client" %  "3.4.4",
+  "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.13"
 )
+
 
 TwirlKeys.templateImports += "dtos._"
 
