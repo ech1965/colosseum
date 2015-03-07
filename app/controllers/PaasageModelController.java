@@ -33,6 +33,8 @@ import dtos.convert.api.ModelDtoConversionService;
 import models.PaasageModel;
 import models.service.api.PaasageModelServiceInterface;
 import play.mvc.Security;
+import services.MessagingServiceInterface;
+import services.messaging.MessagePassage;
 
 
 /**
@@ -83,10 +85,12 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
      * @param conversionService         Model <-> DTO conversion service.
      */
     @Inject
-    protected PaasageModelController(PaasageModelServiceInterface PaasageModelService, ModelDtoConversionService conversionService) {
+    protected PaasageModelController(PaasageModelServiceInterface PaasageModelService, ModelDtoConversionService conversionService, MessagingServiceInterface messagingServiceInterface) {
         super(PaasageModelService, conversionService);
+        this.messagingServiceInterface = messagingServiceInterface;
     }
 
+    protected MessagingServiceInterface messagingServiceInterface;
 
     @Override
     protected String getSelfRoute(Long id) {
@@ -106,5 +110,13 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
             return BeforeAfterResult.ABORT;
         }
         return BeforeAfterResult.CONTINUE;
+    }
+
+    @Override
+    protected void afterUpdate(PaasageModel updated) {
+
+        MessagePassage message = new MessagePassage(updated.getId(), updated.getAction().toString());
+        messagingServiceInterface.publishMessage("PAASAGE", message);
+        return ;
     }
 }

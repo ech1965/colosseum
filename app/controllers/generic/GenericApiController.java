@@ -60,9 +60,9 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
         return BeforeAfterResult.CONTINUE;
     }
 
-    protected BeforeAfterResult afterUpdate(T current, S wanted)
+    protected void afterUpdate(T updated)
     {
-        return BeforeAfterResult.CONTINUE;
+        return;
     }
 
     private final ModelServiceInterface<T> modelService;
@@ -254,7 +254,7 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
         if ( shouldIGo == BeforeAfterResult.CONTINUE) {
             this.modelService.save(entity);
             entity = this.conversionService.toModel(filledForm.get(), entity, this.type);
-
+            afterUpdate(entity);
             return ok();
         }
         else
