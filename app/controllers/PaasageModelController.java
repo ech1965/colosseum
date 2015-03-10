@@ -87,10 +87,10 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     @Inject
     protected PaasageModelController(PaasageModelServiceInterface PaasageModelService, ModelDtoConversionService conversionService, MessagingServiceInterface messagingServiceInterface) {
         super(PaasageModelService, conversionService);
-        this.messagingServiceInterface = messagingServiceInterface;
+        this.messagingService = messagingServiceInterface;
     }
 
-    protected MessagingServiceInterface messagingServiceInterface;
+    protected MessagingServiceInterface messagingService;
 
     @Override
     protected String getSelfRoute(Long id) {
@@ -116,7 +116,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     protected void afterUpdate(PaasageModel updated) {
 
         MessagePassage message = new MessagePassage(updated.getId(), updated.getAction().toString());
-        messagingServiceInterface.publishMessage("PAASAGE", message);
+        messagingService.publishMessage("PAASAGE", message);
         return ;
     }
 }
