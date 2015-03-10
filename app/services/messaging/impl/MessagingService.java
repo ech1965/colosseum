@@ -2,6 +2,7 @@ package services.messaging.impl;
 
 import play.Logger;
 
+import play.modules.rabbitmq.producer.RabbitMQPublisher;
 import services.MessagingServiceInterface;
 import services.messaging.MessageBase;
 
@@ -17,5 +18,6 @@ public class MessagingService implements MessagingServiceInterface {
         checkNotNull(queue);
         checkNotNull(message);
         Logger.debug("About to publish this message" + message.toString() + " to queue " + queue.toString());
+        RabbitMQPublisher.publish(queue,message);
     }
 }

@@ -14,6 +14,22 @@ public class MessagePassage extends MessageBase implements Serializable{
     private Long paasageModelId;
     private String action;
 
+    public Long getPaasageModelId() {
+        return paasageModelId;
+    }
+
+    public void setPaasageModelId(Long paasageModelId) {
+        this.paasageModelId = paasageModelId;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
     @Override
     public String toString() {
         return "MessagePassage{" +
