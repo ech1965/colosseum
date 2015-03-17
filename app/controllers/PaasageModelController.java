@@ -34,7 +34,7 @@ import models.PaasageModel;
 import models.service.api.PaasageModelServiceInterface;
 import play.mvc.Security;
 import services.MessagingServiceInterface;
-import services.messaging.MessagePassage;
+import services.messaging.PaasageMessage;
 
 
 /**
@@ -115,7 +115,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     @Override
     protected void afterUpdate(PaasageModel updated) {
 
-        MessagePassage message = new MessagePassage(updated.getId(), updated.getAction().toString());
+        PaasageMessage message = new PaasageMessage(updated.getId(), updated.getAction().toString());
         messagingService.publishMessage("PAASAGE", message);
         return ;
     }

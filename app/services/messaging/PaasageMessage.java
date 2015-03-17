@@ -5,8 +5,8 @@ import java.io.Serializable;
 /**
  * Created by ec on 7/03/15.
  */
-public class MessagePassage extends MessageBase implements Serializable{
-    public MessagePassage(Long passageModelId, String action){
+public class PaasageMessage extends MessageBase implements Serializable{
+    public PaasageMessage(Long passageModelId, String action){
         super("PaaSage");
         this.paasageModelId = passageModelId;
         this.action = action;
@@ -32,7 +32,7 @@ public class MessagePassage extends MessageBase implements Serializable{
 
     @Override
     public String toString() {
-        return "MessagePassage{" +
+        return "PaasageMessage{" +
                 "paasageModelId=" + paasageModelId +
                 ", action='" + action + '\'' +
                 '}';
