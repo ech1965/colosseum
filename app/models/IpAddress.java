@@ -20,49 +20,56 @@ package models;
 
 import models.generic.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
- * Created by daniel on 08.01.15.
+ * Created by daniel on 12.03.15.
  */
 @Entity
-public class CommunicationChannel extends Model {
+public class IpAddress extends Model {
 
-    @ManyToOne
-    private Communication communication;
-    @ManyToOne
-    private Instance provider;
-    @ManyToOne
-    private Instance consumer;
+    @Column(updatable = false)
+    private String ip;
+
+    @Enumerated(EnumType.STRING)
+    @Column(updatable = false)
+    private IpType ipType;
+
+    @ManyToOne(optional = false)
+    private VirtualMachine virtualMachine;
 
     /**
      * Empty constructor for hibernate.
      */
-    private CommunicationChannel() {
+    private IpAddress() {
     }
 
-    public Communication getCommunication() {
-        return communication;
+    public IpAddress(String ip, IpType ipType) {
+        this.ip = ip;
+        this.ipType = ipType;
     }
 
-    public void setCommunication(Communication communication) {
-        this.communication = communication;
+    public String getIp() {
+        return ip;
     }
 
-    public Instance getProvider() {
-        return provider;
+    public IpType getIpType() {
+        return ipType;
     }
 
-    public void setProvider(Instance provider) {
-        this.provider = provider;
+    public void setIp(String ip) {
+        this.ip = ip;
     }
 
-    public Instance getConsumer() {
-        return consumer;
+    public void setIpType(IpType ipType) {
+        this.ipType = ipType;
     }
 
-    public void setConsumer(Instance consumer) {
-        this.consumer = consumer;
+    public VirtualMachine getVirtualMachine() {
+        return virtualMachine;
+    }
+
+    public void setVirtualMachine(VirtualMachine virtualMachine) {
+        this.virtualMachine = virtualMachine;
     }
 }

@@ -19,47 +19,44 @@
 package dtos.convert.converters.impl;
 
 import com.google.inject.Inject;
-import dtos.ImageDto;
+import dtos.IpAddressDto;
 import dtos.convert.impl.BaseConverter;
-import models.Image;
-import models.OperatingSystem;
-import models.service.impl.OperatingSystemServiceImpl;
+import models.IpAddress;
+import models.IpType;
+import models.VirtualMachine;
+import models.service.api.VirtualMachineService;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 /**
- * Created by daniel seybold on 10.12.2014.
+ * Created by daniel seybold on 11.12.2014.
  */
-public class ImageConverter extends BaseConverter<Image, ImageDto> {
+public class IpAddressConverter extends BaseConverter<IpAddress, IpAddressDto> {
 
-    private final OperatingSystemServiceImpl operatingSystemServiceImpl;
+    private final VirtualMachineService virtualMachineService;
 
     @Inject
-    ImageConverter(OperatingSystemServiceImpl operatingSystemServiceImpl) {
-
-        checkNotNull(operatingSystemServiceImpl);
-
-        this.operatingSystemServiceImpl = operatingSystemServiceImpl;
-
+    public IpAddressConverter(VirtualMachineService virtualMachineService) {
+        this.virtualMachineService = virtualMachineService;
     }
 
     @Override
-    public Image toModel(ImageDto dto, Image model) {
+    public IpAddress toModel(IpAddressDto dto, IpAddress model) {
         checkNotNull(dto);
         checkNotNull(model);
-        model.setName(dto.getName());
+        model.setIp(dto.getIp());
+        model.setIpType(IpType.valueOf(dto.getIpType()));
 
-        OperatingSystem operatingSystem = operatingSystemServiceImpl.getById(dto.getOperatingSystem());
-        checkState(operatingSystem != null, "Could not retrieve operating system for id: " + dto.getOperatingSystem());
-        model.setOperatingSystem(operatingSystem);
+        VirtualMachine vm = virtualMachineService.getById(dto.getVirtualMachine());
+        checkState(vm != null, "Could not retrieve virtual machine for id: " + dto.getVirtualMachine());
+        model.setVirtualMachine(vm);
 
         return model;
     }
 
     @Override
-    public ImageDto toDto(Image model) {
-        checkNotNull(model);
-        return new ImageDto(model.getName(), model.getOperatingSystem().getId());
+    public IpAddressDto toDto(IpAddress model) {
+        return new IpAddressDto(model.getIp(), model.getIpType().toString(), model.getVirtualMachine().getId());
     }
 }

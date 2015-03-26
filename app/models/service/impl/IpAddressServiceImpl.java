@@ -16,32 +16,20 @@
  * under the License.
  */
 
-package dtos.convert.converters.impl;
+package models.service.impl;
 
-import dtos.ApplicationDto;
-import dtos.convert.impl.BaseConverter;
-import models.Application;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.inject.Inject;
+import models.IpAddress;
+import models.repository.api.IpAddressRepository;
+import models.service.api.IpAddressService;
+import models.service.impl.generic.ModelService;
 
 /**
- * Created by daniel seybold on 16.12.2014.
+ * Created by daniel seybold on 11.12.2014.
  */
-public class ApplicationConverter extends BaseConverter<Application, ApplicationDto> {
-
-    @Override
-    public Application toModel(ApplicationDto dto, Application model) {
-        checkNotNull(dto);
-        checkNotNull(model);
-        model.setName(dto.getName());
-
-        return model;
-    }
-
-    @Override
-    public ApplicationDto toDto(Application model) {
-        checkNotNull(model);
-        return new ApplicationDto(model.getName());
+public class IpAddressServiceImpl extends ModelService<IpAddress> implements IpAddressService {
+    @Inject
+    public IpAddressServiceImpl(IpAddressRepository modelRepository) {
+        super(modelRepository);
     }
 }

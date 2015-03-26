@@ -28,7 +28,13 @@ import java.util.List;
  * Created by daniel on 12.12.14.
  */
 @Entity
-public abstract class Component extends NamedModel{
+public abstract class Component extends NamedModel {
+
+    /**
+     * Empty constructor for hibernate.
+     */
+    protected Component() {
+    }
 
     @OneToMany(mappedBy = "component")
     private List<ApplicationComponent> applicationComponents;

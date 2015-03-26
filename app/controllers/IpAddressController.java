@@ -16,32 +16,27 @@
  * under the License.
  */
 
-package dtos.convert.converters.impl;
+package controllers;
 
-import dtos.ApplicationDto;
-import dtos.convert.impl.BaseConverter;
-import models.Application;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.inject.Inject;
+import controllers.generic.GenericApiController;
+import dtos.IpAddressDto;
+import dtos.convert.api.ModelDtoConversionService;
+import models.IpAddress;
+import models.service.api.IpAddressService;
 
 /**
- * Created by daniel seybold on 16.12.2014.
+ * Created by daniel on 12.03.15.
  */
-public class ApplicationConverter extends BaseConverter<Application, ApplicationDto> {
+public class IpAddressController extends GenericApiController<IpAddress, IpAddressDto> {
 
-    @Override
-    public Application toModel(ApplicationDto dto, Application model) {
-        checkNotNull(dto);
-        checkNotNull(model);
-        model.setName(dto.getName());
-
-        return model;
+    @Inject
+    protected IpAddressController(IpAddressService modelService, ModelDtoConversionService conversionService) {
+        super(modelService, conversionService);
     }
 
     @Override
-    public ApplicationDto toDto(Application model) {
-        checkNotNull(model);
-        return new ApplicationDto(model.getName());
+    protected String getSelfRoute(Long id) {
+        return controllers.routes.IpAddressController.get(id).absoluteURL(request());
     }
 }

@@ -16,44 +16,24 @@
  * under the License.
  */
 
-package models;
+package dtos.convert.impl;
 
+import dtos.convert.converters.api.ModelDtoConverter;
+import dtos.generic.api.Dto;
+import dtos.generic.impl.Link;
 import models.generic.Model;
 
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
-import java.util.List;
+import java.util.Set;
 
 /**
- * Created by daniel on 10.11.14.
+ * Created by daniel on 18.12.14.
  */
-@Entity
-public class LocationCode extends Model {
+public abstract class BaseConverter<T extends Model, S extends Dto> implements ModelDtoConverter<T, S> {
 
-    @ManyToMany(mappedBy = "locationCodes")
-    private List<Location> locations;
-
-    private String iso3166Alpha2;
-
-    /**
-     * Empty constructor for hibernate.
-     */
-    private LocationCode() {
+    public S toDto(T model, Set<Link> links) {
+        S dto = this.toDto(model);
+        dto.getLinks().addAll(links);
+        return dto;
     }
 
-    public String getIso3166Alpha2() {
-        return iso3166Alpha2;
-    }
-
-    public void setIso3166Alpha2(String iso3166Alpha2) {
-        this.iso3166Alpha2 = iso3166Alpha2;
-    }
-
-    public List<Location> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
-    }
 }

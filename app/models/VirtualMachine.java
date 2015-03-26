@@ -20,9 +20,10 @@ package models;
 
 import models.generic.NamedModel;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -32,7 +33,10 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Entity
 public class VirtualMachine extends NamedModel {
 
-    public VirtualMachine() {
+    /**
+     * Empty constructor for hibernate.
+     */
+    private VirtualMachine() {
     }
 
     @ManyToOne(optional = false)
@@ -46,6 +50,9 @@ public class VirtualMachine extends NamedModel {
 
     @ManyToOne(optional = false)
     private CloudLocation cloudLocation;
+
+    @OneToMany(mappedBy = "virtualMachine")
+    private List<IpAddress> ipAddresses;
 
     public Cloud getCloud() {
         return cloud;
@@ -81,5 +88,13 @@ public class VirtualMachine extends NamedModel {
     public void setCloudLocation(CloudLocation cloudLocation) {
         checkNotNull(cloudLocation);
         this.cloudLocation = cloudLocation;
+    }
+
+    public List<IpAddress> getIpAddresses() {
+        return ipAddresses;
+    }
+
+    public void setIpAddresses(List<IpAddress> ipAddresses) {
+        this.ipAddresses = ipAddresses;
     }
 }
