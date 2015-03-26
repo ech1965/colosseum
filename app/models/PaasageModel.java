@@ -4,6 +4,8 @@ import models.generic.NamedModel;
 
 import javax.persistence.*;
 
+import java.util.Base64;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 
@@ -28,7 +30,7 @@ public class PaasageModel extends NamedModel{
     }
 
     public enum State  {
-        NEW, UNCHANGED, CREATED, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING;
+        NEW, UNCHANGED, CREATED, UPLOADING_XMI, READY_TO_REASON, REASONING, NO_SOLUTION, READY_TO_CHOOSE, READY_TO_DEPLOY, DEPLOYING, DEPLOYED, RUNNING, IN_ERROR;
         public static State  fromString(String name) {
             return getEnumFromString(State.class, name);
         }
@@ -38,6 +40,7 @@ public class PaasageModel extends NamedModel{
         UNCHANGED,                       // If no arrow in state diagram, don't do anything
         CREATE,                          // Resource being created by user
         UPLOAD_XMI,                      // XMI being uploaded by user
+        XMI_UPLOADED,                    // XMI file uploaded into CDO
         START_REASONNING,                // Reasoning started by user
         REASONNED_NO_PLAN,               // Reason outcome: NO Deployment PLAN (by PaaSage)
         REASONNED_ONE_PLAN,              // Reason outcome:  One Deployment plan (by PaaSage)
@@ -134,5 +137,21 @@ public class PaasageModel extends NamedModel{
 
     public void setXmiModelEncoded(String xmiModelEncoded) {
         this.xmiModelEncoded = xmiModelEncoded;
+    }
+
+    // Kind of getter but for computed fields
+    public String decodeXmiModel() {
+        // Do not decode then SENTINEL
+        if ("UNCHANGED".equalsIgnoreCase(xmiModelEncoded))
+            return xmiModelEncoded;
+        byte[] decoded = Base64.getDecoder().decode(xmiModelEncoded);
+        String decodedString = new String(decoded);
+        return decodedString;
+    }
+
+    // Kind of setter for computed field
+    public void encodeXmiModel(String xmiModelDecoded){
+        byte[] encoded = Base64.getEncoder().encode(xmiModelDecoded.getBytes());
+        this.xmiModelEncoded =new String(encoded);
     }
 }

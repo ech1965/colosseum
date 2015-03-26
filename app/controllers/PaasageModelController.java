@@ -45,37 +45,72 @@ import services.messaging.PaasageMessage;
 @Security.Authenticated(SecuredToken.class)
 public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
 
-    private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfig ;
+    private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfigForUsers;
 
+    private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfigForSystem;
     static {
-        passageModelStateConfig = new StateMachineConfig<>();
+        passageModelStateConfigForUsers = new StateMachineConfig<>();
 
-        passageModelStateConfig.configure(PaasageModel.State.CREATED)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.CREATED)
                 .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.READY_TO_REASON);
 
-        passageModelStateConfig.configure(PaasageModel.State.READY_TO_REASON)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.READY_TO_REASON)
                 .permit(PaasageModel.Action.START_REASONNING,PaasageModel.State.REASONING);
 
-        passageModelStateConfig.configure(PaasageModel.State.REASONING)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.REASONING)
                 .permit(PaasageModel.Action.REASONNED_NO_PLAN, PaasageModel.State.NO_SOLUTION)
                 .permit(PaasageModel.Action.REASONNED_ONE_PLAN, PaasageModel.State.READY_TO_DEPLOY)
                 .permit(PaasageModel.Action.REASONNED_MULTI_PLANS,PaasageModel.State.READY_TO_CHOOSE);
 
-        passageModelStateConfig.configure(PaasageModel.State.NO_SOLUTION)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.NO_SOLUTION)
                 .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.READY_TO_REASON);
 
-        passageModelStateConfig.configure(PaasageModel.State.READY_TO_CHOOSE)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.READY_TO_CHOOSE)
                 .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.READY_TO_REASON)
                 .permit(PaasageModel.Action.CHOOSE_PLAN, PaasageModel.State.READY_TO_DEPLOY);
 
-        passageModelStateConfig.configure(PaasageModel.State.READY_TO_DEPLOY)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.READY_TO_DEPLOY)
                 .permit(PaasageModel.Action.DEPLOY, PaasageModel.State.DEPLOYING);
 
-        passageModelStateConfig.configure(PaasageModel.State.DEPLOYING)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.DEPLOYING)
                 .permit(PaasageModel.Action.FINISH_DEPLOYMENT, PaasageModel.State.DEPLOYED);
 
-        passageModelStateConfig.configure(PaasageModel.State.DEPLOYED)
+        passageModelStateConfigForUsers.configure(PaasageModel.State.DEPLOYED)
                 .permit(PaasageModel.Action.RUN, PaasageModel.State.RUNNING);
+
+
+
+        passageModelStateConfigForSystem = new StateMachineConfig<>();
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.CREATED)
+                .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.UPLOADING_XMI);
+        passageModelStateConfigForSystem.configure(PaasageModel.State.UPLOADING_XMI)
+                .permit(PaasageModel.Action.XMI_UPLOADED, PaasageModel.State.READY_TO_REASON);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.READY_TO_REASON)
+                .permit(PaasageModel.Action.START_REASONNING,PaasageModel.State.REASONING);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.REASONING)
+                .permit(PaasageModel.Action.REASONNED_NO_PLAN, PaasageModel.State.NO_SOLUTION)
+                .permit(PaasageModel.Action.REASONNED_ONE_PLAN, PaasageModel.State.READY_TO_DEPLOY)
+                .permit(PaasageModel.Action.REASONNED_MULTI_PLANS,PaasageModel.State.READY_TO_CHOOSE);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.NO_SOLUTION)
+                .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.READY_TO_REASON);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.READY_TO_CHOOSE)
+                .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.READY_TO_REASON)
+                .permit(PaasageModel.Action.CHOOSE_PLAN, PaasageModel.State.READY_TO_DEPLOY);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.READY_TO_DEPLOY)
+                .permit(PaasageModel.Action.DEPLOY, PaasageModel.State.DEPLOYING);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.DEPLOYING)
+                .permit(PaasageModel.Action.FINISH_DEPLOYMENT, PaasageModel.State.DEPLOYED);
+
+        passageModelStateConfigForSystem.configure(PaasageModel.State.DEPLOYED)
+                .permit(PaasageModel.Action.RUN, PaasageModel.State.RUNNING);
+
     }
 
     /**
@@ -101,7 +136,12 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     protected BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
     {
         StateMachine<PaasageModel.State, PaasageModel.Action> modelState;
-        modelState = new StateMachine<>(current.getState(), passageModelStateConfig);
+        //TODO: use user specific or system specific FSM
+//        modelState = new StateMachine<>(current.getState(), passageModelStateConfigForUsers);
+        modelState = new StateMachine<>(current.getState(), passageModelStateConfigForSystem);
+        // FIXME: quick hack to accept state IN_ERROR from any action
+        if (wanted.getState() == PaasageModel.State.IN_ERROR)
+            return BeforeAfterResult.CONTINUE;
         try {
             modelState.fire(wanted.getAction());
             wanted.state = modelState.getState().toString();

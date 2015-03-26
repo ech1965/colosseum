@@ -158,8 +158,8 @@ DELETE        /api/virtualMachineTemplate/:id        @controllers.VirtualMachine
 #PaasageModel
 GET           /api/model                           @controllers.PaasageModelController.list()
 GET           /api/model/:id                       @controllers.PaasageModelController.get(id: Long)
-PUT           /api/model                           @controllers.PaasageModelController.create()
-POST          /api/model/:id                       @controllers.PaasageModelController.update(id: Long)
+POST          /api/model                           @controllers.PaasageModelController.create()
+PUT           /api/model/:id                       @controllers.PaasageModelController.update(id: Long)
 DELETE        /api/model/:id                       @controllers.PaasageModelController.delete(id: Long)
 
 
