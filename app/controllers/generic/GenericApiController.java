@@ -270,9 +270,8 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
             afterUpdate(entity);
             return get(entity.getId());
 
-        {
-            return badRequest("Transition error");
         }
+        return badRequest("Transition error");
     }
 
     /**
@@ -300,5 +299,4 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
 
         return ok();
     }
-
 }

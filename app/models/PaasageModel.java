@@ -150,7 +150,7 @@ public class PaasageModel extends NamedModel{
     }
 
     // Kind of setter for computed field
-    public void encodeXmiModel(String xmiModelDecoded){
+    public void encodeXmiModel(String xmiModelDecoded) {
         byte[] encoded = Base64.getEncoder().encode(xmiModelDecoded.getBytes());
         this.xmiModelEncoded =new String(encoded);
     }

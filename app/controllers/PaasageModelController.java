@@ -48,6 +48,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfigForUsers;
 
     private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfigForSystem;
+
     static {
         passageModelStateConfigForUsers = new StateMachineConfig<>();
 
@@ -84,6 +85,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
 
         passageModelStateConfigForSystem.configure(PaasageModel.State.CREATED)
                 .permit(PaasageModel.Action.UPLOAD_XMI, PaasageModel.State.UPLOADING_XMI);
+
         passageModelStateConfigForSystem.configure(PaasageModel.State.UPLOADING_XMI)
                 .permit(PaasageModel.Action.XMI_UPLOADED, PaasageModel.State.READY_TO_REASON);
 
