@@ -269,8 +269,8 @@ public abstract class GenericApiController<T extends Model, S extends Dto> exten
             entity = this.conversionService.toModel(filledForm.get(), entity, this.type);
             afterUpdate(entity);
             return get(entity.getId());
-
-        {
+        }
+        else {
             return badRequest("Transition error");
         }
     }
