@@ -55,6 +55,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Security.Authenticated(SecuredSessionOrToken.class)
 public abstract class GenericApiController<T extends Model, S extends Dto> extends Controller {
 
+    
     protected enum BeforeAfterResult { CONTINUE, ABORT }
 
     protected BeforeAfterResult beforeUpdate(T current, S wanted)

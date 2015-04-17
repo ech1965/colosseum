@@ -52,4 +52,6 @@ publishTo := {
 
 credentials += Credentials(Path.userHome / ".m2" / ".credentials")
 
-ApiDocSettings.apiDocTask
+sources in doc in Compile := List() 
+
+//ApiDocSettings.apiDocTask
