@@ -2,19 +2,10 @@ import de.johoop.jacoco4sbt.JacocoPlugin.jacoco
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava)
 
-name := "executionware"
+name := "colosseum"
 
-//val conf = ConfigFactory.parseFile(new File("conf/application.conf")).resolve()
-// val buildNumber = conf.getString("build.number")
+version := "1.2.0-SNAPSHOT"
 
-//version := "b" + buildNumber + "-1.0-SNAPSHOT"
-version := "1.0-SNAPSHOT"
-
-//resolvers += "eladron-snapshots" at "http://eladron.e-technik.uni-ulm.de:8081/nexus/content/repositories/snapshots"
-
-//resolvers += "eladron-releases" at "http://eladron.e-technik.uni-ulm.de:8081/nexus/content/repositories/releases"
-
-resolvers += "sberan-github" at "https://raw.github.com/sberan/mvn-repo/master/releases"
 
 libraryDependencies ++= Seq(
   javaJdbc,
@@ -22,7 +13,6 @@ libraryDependencies ++= Seq(
   "org.hibernate" % "hibernate-entitymanager" % "4.3.5.Final",
   cache,
   "org.mariadb.jdbc" % "mariadb-java-client" % "1.1.7",
-  "com.theoryinpractise" % "halbuilder-json" % "3.1.3",
   "org.hamcrest" % "hamcrest-all" % "1.3",
   "com.google.inject" % "guice" % "3.0",
   "com.google.inject.extensions" % "guice-multibindings" % "3.0",
@@ -32,7 +22,8 @@ libraryDependencies ++= Seq(
   "com.github.oxo42" % "stateless4j" % "2.5.0",
   "commons-lang" % "commons-lang" % "2.6",
   "com.rabbitmq" % "amqp-client" %  "3.4.4",
-  "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.13"
+  "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.13",
+  "de.uniulm.omi.cloudiator" % "sword-service" % "1.2.0-SNAPSHOT"
 )
 
 
@@ -42,16 +33,4 @@ jacoco.settings
 
 javaOptions in Test += "-Dconfig.file=conf/test.conf"
 
-publishTo := {
-  val nexus = "http://eladron.e-technik.uni-ulm.de:8081/nexus/content/repositories/"
-  if (version.value.trim.endsWith("SNAPSHOT"))
-    Some("snapshots" at nexus + "snapshots")
-  else
-    Some("releases" at nexus + "releases")
-}
-
-credentials += Credentials(Path.userHome / ".m2" / ".credentials")
-
-sources in doc in Compile := List() 
-
-//ApiDocSettings.apiDocTask
+ApiDocSettings.apiDocTask

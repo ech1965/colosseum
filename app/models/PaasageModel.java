@@ -1,19 +1,20 @@
 package models;
 
-import models.generic.NamedModel;
+import models.generic.Model;
 
 import javax.persistence.*;
 
 import java.util.Base64;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
 
 /**
  * Class representing a PaaSage Model and tracking its state through the PaaSage platform
  */
 @Entity
-public class PaasageModel extends NamedModel{
+public class PaasageModel extends Model{
 
     /**
      * A common method for all enums since they can't have another base class
@@ -58,8 +59,11 @@ public class PaasageModel extends NamedModel{
 
     public PaasageModel()  {}
 
-    public PaasageModel(String name){
-        super(name);
+    public PaasageModel(String name)
+    {
+        checkNotNull(name);
+        checkArgument(!name.isEmpty());
+        this.name = name;
     }
 
 
@@ -67,6 +71,17 @@ public class PaasageModel extends NamedModel{
      * Serial Version.
      */
     private static final long serialVersionUID = 1L;
+
+    @Column(unique = true, nullable = false)
+    protected String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     /**
      * State of the PaaSage Model.

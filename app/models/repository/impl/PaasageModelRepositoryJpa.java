@@ -18,12 +18,28 @@
 
 package models.repository.impl;
 
+import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 import models.PaasageModel;
 import models.repository.api.PaasageModelRepository;
-import models.repository.impl.generic.NamedModelRepositoryJpa;
+import models.repository.impl.generic.BaseModelRepositoryJpa;
 
+import javax.persistence.Query;
+import static models.util.JpaResultHelper.*;
 /**
  * Created by etienne on 01.02.15.
  */
-public class PaasageModelRepositoryJpa extends NamedModelRepositoryJpa<PaasageModel> implements PaasageModelRepository {
+public class PaasageModelRepositoryJpa extends BaseModelRepositoryJpa<PaasageModel> implements PaasageModelRepository {
+    @Override
+    public PaasageModel findByName(String name) {
+        String queryString = String.format("from %s where name = :name", type.getName());
+        Query query = em().createQuery(queryString).setParameter("name",name);
+        //noinspection unchecked
+        return (PaasageModel) getSingleResultOrNull(query);
+
+    }
+    @Inject
+    public PaasageModelRepositoryJpa(TypeLiteral<PaasageModel> type) {
+        super(type);
+    }
 }

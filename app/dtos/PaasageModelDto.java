@@ -18,29 +18,31 @@
  */
 
 package dtos;
-import dtos.generic.impl.NamedDto;
+import dtos.generic.ValidatableDto;
+import dtos.validation.NotNullOrEmptyValidator;
 import models.PaasageModel;
-import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import java.util.List;
 import java.util.ArrayList;
 
 
 
-public class PaasageModelDto extends NamedDto {
+public class PaasageModelDto extends ValidatableDto {
 
     public PaasageModelDto() {
         super();
     }
 
     public PaasageModelDto(String name, PaasageModel.State state, String subState, PaasageModel.Action action, String xmiModelEncoded) {
-        super(name);
+        super();
+        this.name     = name;
         this.state    = state.toString();
         this.subState = subState;
         this.action   = action.toString();
         this.xmiModelEncoded = xmiModelEncoded;
     }
 
+    public String name;
     public String state;
     public String subState;
     public String action;
@@ -56,27 +58,19 @@ public class PaasageModelDto extends NamedDto {
         return PaasageModel.Action.fromString(action);
     }
 
-    @Override
-    public List<ValidationError> validateNotNull() {
-        List<ValidationError> errors = new ArrayList<>();
+    @Override public void validation() {
+        validator(String.class).validate(state).withValidator(new NotNullOrEmptyValidator());
+        validator(String.class).validate(xmiModelEncoded).withValidator(new NotNullOrEmptyValidator());
+        //TODO: Create a validator to validate string compliant with enum
+    }
 
+    private List<ValidationError> validateNotNull() {
+        List<ValidationError> errors = new ArrayList<>();
         validateState(errors);
         validateAction(errors);
-        validateSubState(errors);
-        validateXmiModelEncoded(errors);
         return errors;
     }
 
-    private void validateSubState(List<ValidationError> errors) {
-        if(this.subState == null){
-            errors.add(new ValidationError("subState", "SubState must not be null"));
-            return;
-        }
-        if (this.subState.isEmpty()) {
-            errors.add(new ValidationError("subState", "SubState must not be empty"));
-        }
-
-    }
     private void validateState(List<ValidationError> errors)
     {
         if(this.state == null){
@@ -102,16 +96,5 @@ public class PaasageModelDto extends NamedDto {
             errors.add(new ValidationError("action", "Action does not map to a valid enum value"));
         }
     }
-    private void validateXmiModelEncoded(List<ValidationError> errors)
-    {
-        if(this.xmiModelEncoded == null){
-            errors.add(new ValidationError("xmiModelEncoded", "XmiModelEncoded must not be null"));
-            return;
-        }
-        if (this.subState.isEmpty()) {
-            errors.add(new ValidationError("xmiModelEncoded", "XmiModelEncoded must not be empty"));
-        }
-    }
-
 }
 

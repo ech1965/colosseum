@@ -26,12 +26,14 @@ package controllers;
 import com.github.oxo42.stateless4j.StateMachine;
 import com.github.oxo42.stateless4j.StateMachineConfig;
 import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 import controllers.generic.GenericApiController;
 import controllers.security.SecuredToken;
 import dtos.PaasageModelDto;
-import dtos.convert.api.ModelDtoConversionService;
+import dtos.conversion.api.ModelDtoConversionService;
 import models.PaasageModel;
 import models.service.api.PaasageModelServiceInterface;
+import models.service.api.generic.ModelService;
 import play.mvc.Security;
 import services.MessagingServiceInterface;
 import services.messaging.PaasageMessage;
@@ -43,7 +45,7 @@ import services.messaging.PaasageMessage;
  * @author Etienne Charlier
  */
 @Security.Authenticated(SecuredToken.class)
-public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto> {
+public class PaasageModelController extends GenericApiController<PaasageModel, PaasageModelDto, PaasageModelDto, PaasageModelDto> {
 
     private static final StateMachineConfig<PaasageModel.State, PaasageModel.Action> passageModelStateConfigForUsers;
 
@@ -121,10 +123,12 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
      * @param PaasageModelService       Model service for PaasageModel model.
      * @param conversionService         Model <-> DTO conversion service.
      */
-    @Inject
-    protected PaasageModelController(PaasageModelServiceInterface PaasageModelService, ModelDtoConversionService conversionService, MessagingServiceInterface messagingServiceInterface) {
-        super(PaasageModelService, conversionService);
+
+    @Inject public PaasageModelController(ModelService<PaasageModel> modelService,
+                                                TypeLiteral<PaasageModel> typeLiteral, ModelDtoConversionService conversionService, MessagingServiceInterface messagingServiceInterface) {
+        super(modelService, typeLiteral, conversionService);
         this.messagingService = messagingServiceInterface;
+
     }
 
     protected MessagingServiceInterface messagingService;
@@ -155,7 +159,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     }
 
     @Override
-    protected void afterUpdate(PaasageModel updated) {
+    protected void postPut(PaasageModel updated) {
 
         PaasageMessage message = new PaasageMessage(updated.getId(), updated.getAction().toString());
         messagingService.publishMessage("PAASAGE", message);
