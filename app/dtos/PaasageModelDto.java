@@ -21,6 +21,7 @@ package dtos;
 import dtos.generic.ValidatableDto;
 import dtos.validation.NotNullOrEmptyValidator;
 import dtos.validation.EnumRepresentationValidator;
+import dtos.validation.NotNullValidator;
 import models.PaasageModel;
 
 
@@ -34,31 +35,31 @@ public class PaasageModelDto extends ValidatableDto {
     public PaasageModelDto(String name, PaasageModel.State state, String subState, PaasageModel.Action action, String xmiModelEncoded) {
         super();
         this.name     = name;
-        this.state    = state.toString();
+        this.state    = state;
         this.subState = subState;
-        this.action   = action.toString();
+        this.action   = action;
         this.xmiModelEncoded = xmiModelEncoded;
     }
 
     public String name;
-    public String state;
+    public PaasageModel.State state;
     public String subState;
-    public String action;
+    public PaasageModel.Action action;
     public String xmiModelEncoded;
 
     public PaasageModel.State getState()
     {
-        return PaasageModel.State.fromString(state);
+        return state;
     }
 
     public PaasageModel.Action getAction()
     {
-        return PaasageModel.Action.fromString(action);
+        return action;
     }
 
     @Override public void validation() {
-        validator(String.class).validate(action).withValidator(new EnumRepresentationValidator(PaasageModel.Action.class));
-        validator(String.class).validate(state).withValidator(new EnumRepresentationValidator(PaasageModel.State.class));
+        validator(PaasageModel.Action.class).validate(action).withValidator(new NotNullValidator());
+        validator(PaasageModel.State.class).validate(state).withValidator(new NotNullValidator());
         validator(String.class).validate(xmiModelEncoded).withValidator(new NotNullOrEmptyValidator());
         validator(String.class).validate(subState).withValidator(new NotNullOrEmptyValidator());
     }
