@@ -37,6 +37,10 @@ public class InitialData {
             FrontendUser frontendUser =
                 new FrontendUser("John", "Doe", "admin", "john.doe@example.com");
             frontendUserService.save(frontendUser);
+
+            // user for backend access
+            frontendUser = new FrontendUser("Backend", "User", "turlututuchapeaupointu", "backedn@paasage.net") ;
+            frontendUserService.save(frontendUser);
         }
     }
 }

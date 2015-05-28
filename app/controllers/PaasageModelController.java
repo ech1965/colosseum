@@ -139,14 +139,18 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     {
         StateMachine<PaasageModel.State, PaasageModel.Action> modelState;
         //TODO: use user specific or system specific FSM
-//        modelState = new StateMachine<>(current.getState(), passageModelStateConfigForUsers);
-        modelState = new StateMachine<>(current.getState(), passageModelStateConfigForSystem);
+        if ("backedn@paasage.net".equalsIgnoreCase(request().username())) {
+           modelState = new StateMachine<>(current.getState(), passageModelStateConfigForSystem);
+        }
+        else {
+            modelState = new StateMachine<>(current.getState(), passageModelStateConfigForUsers);
+        }
         // FIXME: quick hack to accept state IN_ERROR from any action
         if (wanted.getState() == PaasageModel.State.IN_ERROR)
             return BeforeAfterResult.CONTINUE;
         try {
             modelState.fire(wanted.getAction());
-            wanted.state = modelState.getState().toString();
+            wanted.state = modelState.getState();
         }
         catch (IllegalStateException e){
             return BeforeAfterResult.ABORT;
