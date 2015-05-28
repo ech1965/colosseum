@@ -19,8 +19,8 @@
 package dtos.validation;
 
 import dtos.validation.api.ValidationException;
-import dtos.validation.generic.AbstractValidator;
-import dtos.validation.generic.ValidationError;
+        import dtos.validation.generic.AbstractValidator;
+        import dtos.validation.generic.ValidationError;
 
 /**
  * Created by daniel on 19.03.15.

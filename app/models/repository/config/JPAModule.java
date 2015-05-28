@@ -124,6 +124,10 @@ public class JPAModule extends AbstractModule {
         bind(new TypeLiteral<ModelRepository<OperatingSystemVendor>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<OperatingSystemVendor>>() {
         });
+        //PaasageModel
+        bind(new TypeLiteral<ModelRepository<PaasageModel>>() {
+        }).to(new TypeLiteral<BaseModelRepositoryJpa<PaasageModel>>() {
+        });
         //VirtualMachine
         bind(new TypeLiteral<ModelRepository<VirtualMachine>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<VirtualMachine>>() {

@@ -117,15 +117,11 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
 
     }
 
-    /**
-     * Constructor.
-     *
-     * @param PaasageModelService       Model service for PaasageModel model.
-     * @param conversionService         Model <-> DTO conversion service.
-     */
 
     @Inject public PaasageModelController(ModelService<PaasageModel> modelService,
-                                                TypeLiteral<PaasageModel> typeLiteral, ModelDtoConversionService conversionService, MessagingServiceInterface messagingServiceInterface) {
+                                          TypeLiteral<PaasageModel> typeLiteral,
+                                          ModelDtoConversionService conversionService,
+                                          MessagingServiceInterface messagingServiceInterface) {
         super(modelService, typeLiteral, conversionService);
         this.messagingService = messagingServiceInterface;
 

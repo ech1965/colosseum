@@ -6,7 +6,6 @@ name := "colosseum"
 
 version := "1.2.0-SNAPSHOT"
 
-
 libraryDependencies ++= Seq(
   javaJdbc,
   javaJpa.exclude("org.hibernate.javax.persistence", "hibernate-jpa-2.0-api"),

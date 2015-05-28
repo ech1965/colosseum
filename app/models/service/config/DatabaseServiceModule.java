@@ -127,6 +127,10 @@ public class DatabaseServiceModule extends AbstractModule {
         bind(new TypeLiteral<ModelService<OperatingSystemVendor>>() {
         }).to(new TypeLiteral<BaseModelService<OperatingSystemVendor>>() {
         });
+        //PaasageService
+        bind(new TypeLiteral<ModelService<PaasageModel>>() {
+        }).to(new TypeLiteral<BaseModelService<PaasageModel>>() {
+        });
         //VirtualMachine
         bind(new TypeLiteral<ModelService<VirtualMachine>>() {
         }).to(new TypeLiteral<BaseModelService<VirtualMachine>>() {
