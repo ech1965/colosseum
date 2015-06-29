@@ -7,7 +7,7 @@ name := "colosseum"
 version := "1.2.0-SNAPSHOT"
 
 resolvers := (
-  "Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository"
+  "Local Maven Repository" at "file:///" + Path.userHome.absolutePath + "/.m2/repository"
   ) +: resolvers.value
 
 libraryDependencies ++= Seq(
@@ -22,13 +22,15 @@ libraryDependencies ++= Seq(
   "com.google.guava" % "guava" % "18.0",
   "commons-codec" % "commons-codec" % "1.10",
   "com.google.code.findbugs" % "jsr305" % "1.3.9",
+  "org.reflections" % "reflections" % "0.9.10"
+)
+
+libraryDependencies ++= Seq(
   "com.github.oxo42" % "stateless4j" % "2.5.0",
   "commons-lang" % "commons-lang" % "2.6",
   "com.rabbitmq" % "amqp-client" %  "3.4.4",
   "org.codehaus.jackson" % "jackson-mapper-asl" % "1.9.13",
-  "de.uniulm.omi.cloudiator" % "sword-service" % "1.2.0-SNAPSHOT"
 )
-
 
 TwirlKeys.templateImports += "dtos._"
 
