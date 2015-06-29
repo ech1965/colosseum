@@ -16,6 +16,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 @Entity
 public class PaasageModel extends Model{
 
+    public PaasageModel()  {}
+
+    public PaasageModel(String name)
+    {
+        checkNotNull(name);
+        checkArgument(!name.isEmpty());
+        this.name = name;
+    }
+
     /**
      * A common method for all enums since they can't have another base class
      * @param <T> Enum type
@@ -56,15 +65,6 @@ public class PaasageModel extends Model{
         }
     }
 
-
-    public PaasageModel()  {}
-
-    public PaasageModel(String name)
-    {
-        checkNotNull(name);
-        checkArgument(!name.isEmpty());
-        this.name = name;
-    }
 
 
     /**
