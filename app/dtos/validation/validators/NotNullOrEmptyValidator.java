@@ -18,16 +18,9 @@
 
 package dtos.validation.validators;
 
-<<<<<<< HEAD:app/dtos/validation/NotNullOrEmptyValidator.java
-import dtos.validation.api.ValidationException;
-        import dtos.validation.generic.AbstractValidator;
-        import dtos.validation.generic.ValidationError;
-=======
-
 import dtos.validation.AbstractValidator;
 import dtos.validation.ValidationErrorMessage;
 import dtos.validation.ValidationException;
->>>>>>> upstream/master:app/dtos/validation/validators/NotNullOrEmptyValidator.java
 
 /**
  * Created by daniel on 19.03.15.
