@@ -137,7 +137,7 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     }
 
     @Override
-    protected BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
+    protected GenericApiController.BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
     {
         StateMachine<PaasageModel.State, PaasageModel.Action> modelState;
         //TODO: use user specific or system specific FSM
