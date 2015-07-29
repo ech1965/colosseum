@@ -1,8 +1,8 @@
 package dtos.validation;
 
-import dtos.validation.api.ValidationException;
-import dtos.validation.api.Validator;
-import dtos.validation.generic.ValidationError;
+import dtos.validation.ValidationException;
+import dtos.validation.Validator;
+import dtos.validation.ValidationError;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -10,6 +10,7 @@ import java.util.LinkedList;
 /**
  * Created by ec on 21/05/15.
  */
+/*
 public class EnumRepresentationValidator implements Validator<String> {
 
     private String enumName;
@@ -35,3 +36,4 @@ public class EnumRepresentationValidator implements Validator<String> {
         return validationErrorsList;
     }
 }
+*/

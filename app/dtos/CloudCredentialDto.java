@@ -7,8 +7,8 @@ import dtos.validation.validators.ModelIdValidator;
 import dtos.validation.validators.NotNullOrEmptyValidator;
 import dtos.validation.validators.NotNullValidator;
 import models.Cloud;
-import models.FrontendGroup;
-import models.service.api.generic.ModelService;
+import models.Tenant;
+import models.service.ModelService;
 
 /**
  * Created by daniel on 29.03.15.
@@ -18,7 +18,7 @@ public class CloudCredentialDto extends ValidatableDto {
     private String user;
     private String secret;
     private Long cloud;
-    private Long frontendGroup;
+    private Long tenant;
 
     public String getUser() {
         return user;
@@ -44,12 +44,12 @@ public class CloudCredentialDto extends ValidatableDto {
         this.cloud = cloud;
     }
 
-    public Long getFrontendGroup() {
-        return frontendGroup;
+    public Long getTenant() {
+        return tenant;
     }
 
-    public void setFrontendGroup(Long frontendGroup) {
-        this.frontendGroup = frontendGroup;
+    public void setTenant(Long tenant) {
+        this.tenant = tenant;
     }
 
     @Override public void validation() {
@@ -57,14 +57,14 @@ public class CloudCredentialDto extends ValidatableDto {
         validator(String.class).validate(secret).withValidator(new NotNullOrEmptyValidator());
         validator(Long.class).validate(cloud).withValidator(new NotNullValidator())
             .withValidator(new ModelIdValidator<>(References.cloudService.get()));
-        validator(Long.class).validate(frontendGroup).withValidator(new NotNullValidator())
+        validator(Long.class).validate(tenant).withValidator(new NotNullValidator())
             .withValidator(new ModelIdValidator<>(References.frontendGroupService.get()));
     }
 
     public static class References {
 
         @Inject private static Provider<ModelService<Cloud>> cloudService;
-        @Inject private static Provider<ModelService<FrontendGroup>> frontendGroupService;
+        @Inject private static Provider<ModelService<Tenant>> frontendGroupService;
 
         private References() {
         }

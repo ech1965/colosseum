@@ -30,10 +30,12 @@ import com.google.inject.TypeLiteral;
 import controllers.generic.GenericApiController;
 import controllers.security.SecuredToken;
 import dtos.PaasageModelDto;
-import dtos.conversion.api.ModelDtoConversionService;
+import dtos.conversion.ModelDtoConversionService;
 import models.PaasageModel;
+import models.Tenant;
+import models.service.FrontendUserService;
 import models.service.api.PaasageModelServiceInterface;
-import models.service.api.generic.ModelService;
+import models.service.ModelService;
 import play.mvc.Security;
 import services.MessagingServiceInterface;
 import services.messaging.PaasageMessage;
@@ -118,11 +120,12 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
     }
 
 
-    @Inject public PaasageModelController(ModelService<PaasageModel> modelService,
+    @Inject public PaasageModelController(FrontendUserService frontendUserService,ModelService<Tenant> tenantModelService,
+                                          ModelService<PaasageModel> modelService,
                                           TypeLiteral<PaasageModel> typeLiteral,
                                           ModelDtoConversionService conversionService,
                                           MessagingServiceInterface messagingServiceInterface) {
-        super(modelService, typeLiteral, conversionService);
+        super(frontendUserService,tenantModelService,modelService, typeLiteral, conversionService);
         this.messagingService = messagingServiceInterface;
 
     }

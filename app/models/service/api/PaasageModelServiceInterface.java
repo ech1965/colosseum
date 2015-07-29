@@ -2,7 +2,7 @@ package models.service.api;
 
 import com.google.inject.ImplementedBy;
 import models.PaasageModel;
-import models.service.api.generic.ModelService;
+import models.service.ModelService;
 import models.service.impl.PaasageModelService;
 
 /**

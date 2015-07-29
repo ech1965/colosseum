@@ -39,4 +39,6 @@ jacoco.settings
 
 javaOptions in Test += "-Dconfig.file=conf/test.conf"
 
+
 ApiDocSettings.apiDocTask
+

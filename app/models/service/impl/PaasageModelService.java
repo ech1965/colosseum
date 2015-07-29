@@ -2,9 +2,9 @@ package models.service.impl;
 
 import com.google.inject.Inject;
 import models.PaasageModel;
-import models.repository.api.PaasageModelRepository;
+import models.service.PaasageModelRepository;
 import models.service.api.PaasageModelServiceInterface;
-import models.service.impl.generic.BaseModelService;
+import models.service.BaseModelService;
 
 /**
  * Created by ec on 9/02/15.

@@ -2,8 +2,8 @@ package dtos.conversion;
 
 import dtos.LifecycleComponentDto;
 import dtos.PaasageModelDto;
-import dtos.conversion.generic.AbstractConverter;
-import dtos.conversion.generic.DefaultConverter;
+import dtos.conversion.AbstractConverter;
+import dtos.conversion.DefaultConverter;
 import models.LifecycleComponent;
 import models.PaasageModel;
 import static com.google.common.base.Preconditions.checkNotNull;
