@@ -65,6 +65,9 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
     extends AuthenticationController {
 
 
+    /**
+     * Return value for beforeUpdate and afterUpdate
+     */
     protected enum BeforeAfterResult { CONTINUE, ABORT }
 
     protected BeforeAfterResult beforeUpdate(T current, W wanted)

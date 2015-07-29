@@ -34,7 +34,6 @@ import dtos.conversion.ModelDtoConversionService;
 import models.PaasageModel;
 import models.Tenant;
 import models.service.FrontendUserService;
-import models.service.api.PaasageModelServiceInterface;
 import models.service.ModelService;
 import play.mvc.Security;
 import services.MessagingServiceInterface;
