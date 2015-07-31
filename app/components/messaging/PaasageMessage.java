@@ -1,4 +1,4 @@
-package services.messaging;
+package components.messaging;
 
 import java.io.Serializable;
 

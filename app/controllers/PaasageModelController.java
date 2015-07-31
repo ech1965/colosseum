@@ -36,8 +36,8 @@ import models.Tenant;
 import models.service.FrontendUserService;
 import models.service.ModelService;
 import play.mvc.Security;
-import services.MessagingServiceInterface;
-import services.messaging.PaasageMessage;
+import components.messaging.MessagingServiceInterface;
+import components.messaging.PaasageMessage;
 
 
 /**

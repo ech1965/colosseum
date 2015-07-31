@@ -1,10 +1,10 @@
-package services.messaging.impl;
+package components.messaging.impl;
 
 import play.Logger;
 
 import play.modules.rabbitmq.producer.RabbitMQPublisher;
-import services.MessagingServiceInterface;
-import services.messaging.MessageBase;
+import components.messaging.MessagingServiceInterface;
+import components.messaging.MessageBase;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
