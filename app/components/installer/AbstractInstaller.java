@@ -20,39 +20,66 @@ package components.installer;
 
 import components.installer.api.InstallApi;
 import de.uniulm.omi.cloudiator.sword.api.remote.RemoteConnection;
+import models.Tenant;
+import models.VirtualMachine;
+import play.Logger;
+import play.Play;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
-import play.Logger;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by Daniel Seybold on 19.05.2015.
  */
 abstract class AbstractInstaller implements InstallApi {
 
-    protected  final  RemoteConnection remoteConnection;
+    protected final RemoteConnection remoteConnection;
+    protected final VirtualMachine virtualMachine;
+    protected final Tenant tenant;
+
+
     protected final List<String> sourcesList = new ArrayList<>();
 
-    protected final String kairosDbArchive = "kairosdb.tar.gz";
-    protected final String visorJar = "visor.jar";
+    //KairosDB
+    protected static final String KAIROSDB_ARCHIVE = "kairosdb.tar.gz";
+    protected static final String KAIRROSDB_DIR = "kairosdb";
+    protected static final String KAIROSDB_DOWNLOAD = Play.application().configuration()
+        .getString("colosseum.installer.abstract.kairosdb.download");
 
-    protected final String dockerInstall = "docker_install.sh ";
+    //Visor
+    protected static final String VISOR_JAR = "visor.jar";
+    protected static final String VISOR_DOWNLOAD =
+        Play.application().configuration().getString("colosseum.installer.abstract.visor.download");
 
-    protected final String javaDir = "jre8";
-    protected final String kairosDbDir = "kairosdb";
+    //Lance
+    protected static final String LANCE_JAR = "lance.jar";
+    protected static final String LANCE_DOWNLOAD =
+        Play.application().configuration().getString("colosseum.installer.abstract.lance.download");
 
-    protected final String visorProperties = "default.properties";
+    //Java
+    protected static final String JAVA_DIR = "jre8";
 
-    public AbstractInstaller(RemoteConnection remoteConnection){
+
+    protected static final String VISOR_PROPERTIES = "default.properties";
+
+    public AbstractInstaller(RemoteConnection remoteConnection, VirtualMachine virtualMachine,
+        Tenant tenant) {
+
+        checkNotNull(remoteConnection);
+        checkNotNull(virtualMachine);
+        checkNotNull(tenant);
 
         this.remoteConnection = remoteConnection;
+        this.virtualMachine = virtualMachine;
+        this.tenant = tenant;
+
     }
 
-    @Override
-    public void downloadSources(){
+    @Override public void downloadSources() {
 
         Logger.debug("Start downloading sources...");
         ExecutorService executorService = Executors.newCachedThreadPool();
@@ -61,14 +88,15 @@ abstract class AbstractInstaller implements InstallApi {
 
         for (final String downloadCommand : this.sourcesList) {
 
-            Callable<Integer> downloadTask = new DownloadTask(this.remoteConnection, downloadCommand);
+            Callable<Integer> downloadTask =
+                new DownloadTask(this.remoteConnection, downloadCommand);
             tasks.add(downloadTask);
         }
         try {
             List<Future<Integer>> results = executorService.invokeAll(tasks);
 
-            for(Future<Integer> exitCode : results){
-                if(exitCode.get() != 0){
+            for (Future<Integer> exitCode : results) {
+                if (exitCode.get() != 0) {
                     throw new RuntimeException("Downloading of one or more sources failed!");
                 }
             }
@@ -83,10 +111,12 @@ abstract class AbstractInstaller implements InstallApi {
 
     }
 
-    protected String buildDefaultVisorConfig(){
+    protected String buildDefaultVisorConfig() {
 
-
+        //KairosServer depends if visor should connect to vm local kairos or to honme domain kairos
+        //get home domain ip
         //TODO: get public ip if running Cloudiator on a VM in e.g. Openstack
+        /*
         InetAddress inetAddress = null;
         try {
             inetAddress=InetAddress.getLocalHost();
@@ -94,19 +124,38 @@ abstract class AbstractInstaller implements InstallApi {
             Logger.error(e.getMessage());
             e.printStackTrace();
         }
-        String localIp = inetAddress.getHostAddress();
+        String homeDomainIp = inetAddress.getHostAddress();
+        */
 
-        String config = "executionThreads = 20\n" +
-                "reportingInterval = 10\n" +
-                "telnetPort = 9001\n" +
-                "restHost = http://0.0.0.0\n" +
-                "restPort = 9002\n" +
-                "kairosServer = "+localIp+"\n" +
-                "kairosPort = 8080\n" +
-                "reportingModule = de.uniulm.omi.cloudiator.visor.reporting.cli.CommandLineReportingModule";
+        String config = "executionThreads = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.executionThreads") + "\n" +
+            "reportingInterval = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.reportingInterval") + "\n" +
+            "telnetPort = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.telnetPort") + "\n" +
+            "restHost = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.restHost") + "\n" +
+            "restPort = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.restPort") + "\n" +
+            "kairosServer = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.kairosServer") + "\n" +
+            "kairosPort = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.kairosPort") + "\n" +
+            "reportingModule = " + Play.application().configuration()
+            .getString("colosseum.installer.abstract.visor.config.reportingModule");
 
 
         return config;
+
+    }
+
+    public void finishInstallation() {
+
+        Logger.debug("Finished installation of all tools, closing remote connection.");
+        try {
+            this.remoteConnection.close();
+        } catch (IOException ignored) {
+        }
 
     }
 }

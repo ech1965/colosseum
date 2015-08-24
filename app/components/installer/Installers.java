@@ -16,18 +16,32 @@
  * under the License.
  */
 
-package components.job;
+package components.installer;
 
-import models.Instance;
+import components.installer.api.InstallApi;
+import de.uniulm.omi.cloudiator.sword.api.remote.RemoteConnection;
 import models.Tenant;
 import models.VirtualMachine;
 
 /**
- * Created by daniel on 03.07.15.
+ * Created by daniel on 05.08.15.
  */
-public interface JobService {
+public class Installers {
 
-    void newVirtualMachineJob(VirtualMachine virtualMachine, Tenant tenant);
+    private Installers() {
+        
+    }
 
-    void newInstanceJob(Instance instance, Tenant tenant);
+    public static InstallApi of(RemoteConnection remoteConnection, VirtualMachine virtualMachine,
+        Tenant tenant) {
+        switch (virtualMachine.osFamily()) {
+            case UNIX:
+                return new UnixInstaller(remoteConnection, virtualMachine, tenant);
+            case WINDOWS:
+                return new WindowsInstaller(remoteConnection, virtualMachine, tenant);
+            default:
+                throw new AssertionError("Unsupported OsFamily.");
+        }
+    }
+
 }

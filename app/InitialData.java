@@ -83,7 +83,7 @@ public class InitialData {
             //load windows
             OperatingSystemVendor windows =
                 new OperatingSystemVendor("Windows", OperatingSystemVendorType.WINDOWS,
-                    "Administrator", null);
+                    "Administrator", "Admin1");
             operatingSystemVendorModelService.save(windows);
 
             //Windows Server 2012 R2
