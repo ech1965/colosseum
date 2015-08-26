@@ -1,4 +1,4 @@
-package dtos.conversion;
+package dtos.conversion.converters;
 
 import dtos.LifecycleComponentDto;
 import dtos.PaasageModelDto;
@@ -13,36 +13,35 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class PaasageModelConverter extends DefaultConverter<PaasageModel, PaasageModelDto> {
 
-    protected PaasageModelConverter() {
+    public PaasageModelConverter() {
         super(PaasageModel.class, PaasageModelDto.class);
     }
 
-}
-
-
-/*
-        */
-/**
-         * Sets the dto to the paasageModel model.
-         *
-         * @param paasageModel    the paasageModel model where the dto should be set.
-         * @param paasageModelDto the dto to be set.
-         * @return the merged paasageModel object.
-         *//*
+    /**
+    * Sets the dto to the paasageModel model.
+    *
+    * @param paasageModel    the paasageModel model where the dto should be set.
+    * @param paasageModelDto the dto to be set.
+    * @return the merged paasageModel object.
+    */
 
     protected PaasageModel setDto(PaasageModel paasageModel, PaasageModelDto paasageModelDto) {
         checkNotNull(paasageModelDto);
-        checkNotNull(paasageModelDto.getName());
+        checkNotNull(paasageModelDto.name);
         checkNotNull(paasageModelDto.getAction());
         checkNotNull(paasageModelDto.getState());
         checkNotNull(paasageModelDto.subState);
         checkNotNull(paasageModelDto.xmiModelEncoded);
-
-        if (! paasageModelDto.getName().equalsIgnoreCase("UNCHANGED") )     paasageModel.setName(paasageModelDto.getName());
-        if (! paasageModelDto.action.equalsIgnoreCase(PaasageModel.Action.UNCHANGED.toString()))   paasageModel.setAction(paasageModelDto.action);
-        if (! paasageModelDto.state.equalsIgnoreCase( PaasageModel.State.UNCHANGED.toString() ) )    paasageModel.setState(paasageModelDto.state);
-        if (! paasageModelDto.subState.equalsIgnoreCase("UNCHANGED")) paasageModel.setSubState(paasageModelDto.subState);
-        if (! paasageModelDto.xmiModelEncoded.equalsIgnoreCase("UNCHANGED")) paasageModel.setXmiModelEncoded(paasageModelDto.xmiModelEncoded);
+        if (! paasageModelDto.name.equalsIgnoreCase("UNCHANGED") )
+            paasageModel.setName(paasageModelDto.name);
+        if (0 != paasageModelDto.action.compareTo(PaasageModel.Action.UNCHANGED) )
+            paasageModel.setAction(paasageModelDto.action);
+        if (0 != paasageModelDto.state.compareTo(PaasageModel.State.UNCHANGED) )
+            paasageModel.setState(paasageModelDto.state);
+        if (! paasageModelDto.subState.equalsIgnoreCase("UNCHANGED"))
+            paasageModel.setSubState(paasageModelDto.subState);
+        if (! paasageModelDto.xmiModelEncoded.equalsIgnoreCase("UNCHANGED"))
+            paasageModel.setXmiModelEncoded(paasageModelDto.xmiModelEncoded);
 
         return paasageModel;
     }
@@ -60,4 +59,3 @@ public class PaasageModelConverter extends DefaultConverter<PaasageModel, Paasag
         return new PaasageModelDto(paasageModel.getName(), paasageModel.getState(), paasageModel.getSubState(), paasageModel.getAction(),paasageModel.getXmiModelEncoded());
     }
 }
-*/
