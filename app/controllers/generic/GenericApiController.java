@@ -272,7 +272,8 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
             return badRequest(filledForm.errorsAsJson());
         }
 
-        final T entity = this.conversionService.toModel(filledForm.get(), this.getInstance());
+        final V postDto = prePost(filledForm.get());
+        final T entity = this.conversionService.toModel(postDto, this.getInstance());
 
         this.modelService.save(entity);
 
@@ -313,16 +314,21 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
             return badRequest(filledForm.errorsAsJson());
         }
 
-        BeforeAfterResult shouldIGo = beforeUpdate(entity, filledForm.get());
+        //BeforeAfterResult shouldIGo = beforeUpdate(entity, filledForm.get());
+        final W putDto = filledForm.get();
+        entity = this.conversionService.toModel(putDto, entity);
+        entity = prePut(putDto, entity);
 
-        if ( shouldIGo == BeforeAfterResult.CONTINUE) {
-          entity = this.conversionService.toModel(filledForm.get(), entity);
-          this.modelService.save(entity);
+        this.modelService.save(entity);
+
+        //if ( shouldIGo == BeforeAfterResult.CONTINUE) {
+          //entity = this.conversionService.toModel(filledForm.get(), entity);
+          //this.modelService.save(entity);
 
           postPut(entity);
 
           return get(id);
-        }
+        //}
         return badRequest("Transition error");
     }
 
@@ -345,16 +351,32 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
             return this.notFound(id);
         }
 
-        this.modelService.delete(entity);
-
+        this.modelService.delete(preDelete(entity));
+        postDelete();
         return ok();
+    }
+
+    protected V prePost(V postDto) {
+        return postDto;
     }
 
     protected void postPost(T entity) {
         // intentionally left empty
     }
 
+    protected T prePut(W putDto, T entity) {
+        return entity;
+    }
+
     protected void postPut(T entity) {
+        //intentionally left empty
+    }
+
+    protected T preDelete(T entity) {
+        return entity;
+    }
+
+    protected void postDelete() {
         //intentionally left empty
     }
 }
