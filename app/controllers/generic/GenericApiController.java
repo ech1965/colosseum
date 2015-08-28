@@ -65,17 +65,6 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
     extends AuthenticationController {
 
 
-    /**
-     * Return value for beforeUpdate and afterUpdate
-     */
-    protected enum BeforeAfterResult { CONTINUE, ABORT }
-
-    protected BeforeAfterResult beforeUpdate(T current, W wanted)
-    {
-        return BeforeAfterResult.CONTINUE;
-    }
-
-
     private final ModelService<T> modelService;
     private final ModelDtoConversionService conversionService;
     private final Class<T> modelType;
@@ -314,22 +303,15 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
             return badRequest(filledForm.errorsAsJson());
         }
 
-        //BeforeAfterResult shouldIGo = beforeUpdate(entity, filledForm.get());
         final W putDto = filledForm.get();
         entity = this.conversionService.toModel(putDto, entity);
         entity = prePut(putDto, entity);
 
         this.modelService.save(entity);
 
-        //if ( shouldIGo == BeforeAfterResult.CONTINUE) {
-          //entity = this.conversionService.toModel(filledForm.get(), entity);
-          //this.modelService.save(entity);
+        postPut(entity);
 
-          postPut(entity);
-
-          return get(id);
-        //}
-        return badRequest("Transition error");
+        return get(id);
     }
 
     /**

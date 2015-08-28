@@ -1,61 +1,38 @@
+/*
+ * Copyright (c) 2014-2015 University of Ulm
+ *
+ * See the NOTICE file distributed with this work for additional information
+ * regarding copyright ownership.  Licensed under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
 package dtos.conversion.converters;
 
-import dtos.LifecycleComponentDto;
 import dtos.PaasageModelDto;
 import dtos.conversion.AbstractConverter;
-import dtos.conversion.DefaultConverter;
-import models.LifecycleComponent;
 import models.PaasageModel;
-import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by ec on 9/02/15.
- */
-public class PaasageModelConverter extends DefaultConverter<PaasageModel, PaasageModelDto> {
+public class PaasageModelConverter extends AbstractConverter<PaasageModel, PaasageModelDto> {
 
-    public PaasageModelConverter() {
+    protected PaasageModelConverter() {
         super(PaasageModel.class, PaasageModelDto.class);
     }
 
-    /**
-    * Sets the dto to the paasageModel model.
-    *
-    * @param paasageModel    the paasageModel model where the dto should be set.
-    * @param paasageModelDto the dto to be set.
-    * @return the merged paasageModel object.
-    */
-
-    protected PaasageModel setDto(PaasageModel paasageModel, PaasageModelDto paasageModelDto) {
-        checkNotNull(paasageModelDto);
-        checkNotNull(paasageModelDto.name);
-        checkNotNull(paasageModelDto.getAction());
-        checkNotNull(paasageModelDto.getState());
-        checkNotNull(paasageModelDto.subState);
-        checkNotNull(paasageModelDto.xmiModelEncoded);
-        if (! paasageModelDto.name.equalsIgnoreCase("UNCHANGED") )
-            paasageModel.setName(paasageModelDto.name);
-        if (0 != paasageModelDto.action.compareTo(PaasageModel.Action.UNCHANGED) )
-            paasageModel.setAction(paasageModelDto.action);
-        if (0 != paasageModelDto.state.compareTo(PaasageModel.State.UNCHANGED) )
-            paasageModel.setState(paasageModelDto.state);
-        if (! paasageModelDto.subState.equalsIgnoreCase("UNCHANGED"))
-            paasageModel.setSubState(paasageModelDto.subState);
-        if (! paasageModelDto.xmiModelEncoded.equalsIgnoreCase("UNCHANGED"))
-            paasageModel.setXmiModelEncoded(paasageModelDto.xmiModelEncoded);
-
-        return paasageModel;
-    }
-
-    @Override
-    public PaasageModel toModel(PaasageModelDto paasageModelDto, PaasageModel model) {
-        checkNotNull(paasageModelDto);
-        checkNotNull(model);
-        return setDto(model, paasageModelDto);
-    }
-
-    @Override
-    public PaasageModelDto toDto(PaasageModel paasageModel) {
-        checkNotNull(paasageModel);
-        return new PaasageModelDto(paasageModel.getName(), paasageModel.getState(), paasageModel.getSubState(), paasageModel.getAction(),paasageModel.getXmiModelEncoded());
+    @Override public void configure() {
+        binding().fromField("name").toField("name");
+        binding().fromField("action").toField("action");
+        binding().fromField("state").toField("state");
+        binding().fromField("subState").toField("subState");
+        binding().fromField("xmiModelEncoded").toField("xmiModelEncoded");
     }
 }

@@ -160,9 +160,12 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
         return BeforeAfterResult.CONTINUE;
     }
 
+    @Override protected PaasageModel prePut(PaasageModelDto dto, PaasageModel model) {
+        return model;
+    }
+
     @Override
     protected void postPut(PaasageModel updated) {
-
         PaasageMessage message = new PaasageMessage(updated.getId(), updated.getAction().toString());
         messagingService.publishMessage("PAASAGE", message);
         return ;
