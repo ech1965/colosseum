@@ -136,8 +136,9 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
         return controllers.routes.PaasageModelController.get(id).absoluteURL(request());
     }
 
-    @Override
-    protected GenericApiController.BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
+    private enum BeforeAfterResult { CONTINUE, ABORT };
+
+    private BeforeAfterResult beforeUpdate(PaasageModel current, PaasageModelDto wanted)
     {
         StateMachine<PaasageModel.State, PaasageModel.Action> modelState;
         //TODO: use user specific or system specific FSM
@@ -160,14 +161,28 @@ public class PaasageModelController extends GenericApiController<PaasageModel, P
         return BeforeAfterResult.CONTINUE;
     }
 
-    @Override protected PaasageModel prePut(PaasageModelDto dto, PaasageModel model) {
-        return model;
+    @Override protected String prePut(PaasageModelDto dto, PaasageModel model) {
+        // 1. Prevent "UNCHANGED" from being saved into database
+        if ( dto.name.equalsIgnoreCase("UNCHANGED") )
+            dto.name = model.getName();
+        if ( 0 == dto.action.compareTo(PaasageModel.Action.UNCHANGED) )
+            dto.action = model.getAction();
+        if ( 0 == dto.state.compareTo(PaasageModel.State.UNCHANGED) )
+            dto.state = model.getState();
+        if ( dto.subState.equalsIgnoreCase("UNCHANGED"))
+            dto.subState = model.getSubState();
+        if ( dto.xmiModelEncoded.equalsIgnoreCase("UNCHANGED"))
+            dto.xmiModelEncoded = model.getXmiModelEncoded();
+        if ( beforeUpdate(model,dto) == BeforeAfterResult.ABORT)
+        {
+            return "Transition error";
+        }
+        return null;
     }
 
     @Override
     protected void postPut(PaasageModel updated) {
         PaasageMessage message = new PaasageMessage(updated.getId(), updated.getAction().toString());
         messagingService.publishMessage("PAASAGE", message);
-        return ;
     }
 }

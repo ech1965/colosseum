@@ -20,6 +20,7 @@ package controllers.generic;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.reflect.TypeToken;
@@ -193,7 +194,7 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
      */
     protected Result notFound(final Long id) {
         return notFound(
-            "Could not find entity of type " + this.modelType.getSimpleName() + " with id " + id);
+                "Could not find entity of type " + this.modelType.getSimpleName() + " with id " + id);
     }
 
     /**
@@ -304,13 +305,20 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
         }
 
         final W putDto = filledForm.get();
-        prePut(putDto, entity);
-        entity = this.conversionService.toModel(putDto, entity);
-        this.modelService.save(entity);
+        String prePutResult = prePut(putDto, entity);
+        if (Strings.isNullOrEmpty(prePutResult)) {
 
-        postPut(entity);
+            entity = this.conversionService.toModel(putDto, entity);
+            this.modelService.save(entity);
 
-        return get(id);
+            postPut(entity);
+
+            return get(id);
+        }
+        else
+        {
+            return badRequest(prePutResult);
+        }
     }
 
     /**
@@ -345,7 +353,8 @@ public abstract class GenericApiController<T extends Model, U extends Dto, V ext
         // intentionally left empty
     }
 
-    protected void prePut(W putDto, T entity) {
+    protected String prePut(W putDto, T entity) {
+        return null;
     }
 
     protected void postPut(T entity) {
