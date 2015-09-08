@@ -18,28 +18,31 @@
 
 package components.execution;
 
-import com.google.inject.Singleton;
-
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+import java.util.HashSet;
 
 /**
- * Created by daniel on 04.05.15.
+ * Created by daniel on 08.05.15.
  */
-@Singleton public class DefaultPriorityQueue<T extends Prioritized> implements PriorityQueue<T> {
+public class UniqueBlockingQueue<T> implements SimpleBlockingQueue<T> {
 
-    private BlockingQueue<T> queue;
+    private final HashSet<T> set;
+    private final SimpleBlockingQueue<T> queue;
 
-    public DefaultPriorityQueue() {
-        this.queue = new PriorityBlockingQueue<>(10,
-            (first, second) -> Integer.compare(first.getPriority(), second.getPriority()));
+    public UniqueBlockingQueue(SimpleBlockingQueue<T> queue) {
+        set = new HashSet<>();
+        this.queue = queue;
     }
 
     @Override public void add(T t) {
-        this.queue.add(t);
+        if (this.set.add(t)) {
+            this.queue.add(t);
+        }
     }
 
     @Override public T take() throws InterruptedException {
-        return this.queue.take();
+        T t = this.queue.take();
+        this.set.remove(t);
+        return t;
     }
+
 }

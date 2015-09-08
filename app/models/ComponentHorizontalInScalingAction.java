@@ -6,7 +6,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -16,11 +16,23 @@
  * under the License.
  */
 
-package components.execution;
+package models;
+
+import javax.persistence.Entity;
 
 /**
- * Created by daniel on 04.05.15.
+ * Created by Frank on 20.05.2015.
  */
-public interface PriorityQueue<T extends Prioritized> extends SimpleBlockingQueue<T> {
+@Entity public class ComponentHorizontalInScalingAction extends ComponentHorizontalScalingAction {
 
+    /**
+     * Empty constructor for hibernate.
+     */
+    protected ComponentHorizontalInScalingAction() {
+    }
+
+    public ComponentHorizontalInScalingAction(Long amount, Long min, Long max, Long count,
+        ApplicationComponent applicationComponent) {
+        super(amount, min, max, count, applicationComponent);
+    }
 }
