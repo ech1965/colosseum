@@ -30,12 +30,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Entity public class PortProvided extends Port {
 
     @Column private Integer port;
-    @OneToOne(mappedBy = "providedPort", optional = true) Communication communication;
+    @OneToOne(mappedBy = "providedPort", optional = true) Communication providedCommunication;
 
     /**
      * Empty constructor for hibernate.
      */
     protected PortProvided() {
+    }
+
+    @Override public Communication getAttachedCommunication() {
+        return providedCommunication;
     }
 
     public PortProvided(String name, ApplicationComponent applicationComponent, int port) {
@@ -46,9 +50,5 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
     public int getPort() {
         return port;
-    }
-
-    public Communication getCommunication() {
-        return communication;
     }
 }

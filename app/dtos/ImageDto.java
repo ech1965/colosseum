@@ -37,9 +37,10 @@ public class ImageDto extends RemoteDto {
 
     private String name;
     private Long cloud;
-    private List<Long> locations;
+    private Long location;
     private Long operatingSystem;
     private List<Long> cloudCredentials;
+    private String defaultLoginUsername;
 
     public ImageDto() {
         super();
@@ -49,9 +50,8 @@ public class ImageDto extends RemoteDto {
         super.validation();
         validator(Long.class).validate(cloud).withValidator(new NotNullValidator())
             .withValidator(new ModelIdValidator<>(References.cloudService.get()));
-        validator(new TypeLiteral<List<Long>>() {
-        }).validate(locations).withValidator(
-            new IterableValidator<>(new ModelIdValidator<>(References.locationService.get())));
+        validator(Long.class).validate(location).withValidator(new NotNullValidator())
+            .withValidator(new ModelIdValidator<>(References.locationService.get()));
         validator(new TypeLiteral<List<Long>>() {
         }).validate(cloudCredentials).withValidator(new IterableValidator<>(
             new ModelIdValidator<>(References.cloudCredentialService.get())));
@@ -83,12 +83,12 @@ public class ImageDto extends RemoteDto {
         this.operatingSystem = operatingSystem;
     }
 
-    public List<Long> getLocations() {
-        return locations;
+    public Long getLocation() {
+        return location;
     }
 
-    public void setLocations(List<Long> locations) {
-        this.locations = locations;
+    public void setLocation(Long location) {
+        this.location = location;
     }
 
     public List<Long> getCloudCredentials() {
@@ -97,6 +97,14 @@ public class ImageDto extends RemoteDto {
 
     public void setCloudCredentials(List<Long> cloudCredentials) {
         this.cloudCredentials = cloudCredentials;
+    }
+
+    public String getDefaultLoginUsername() {
+        return defaultLoginUsername;
+    }
+
+    public void setDefaultLoginUsername(String defaultLoginUsername) {
+        this.defaultLoginUsername = defaultLoginUsername;
     }
 
     public static class References {

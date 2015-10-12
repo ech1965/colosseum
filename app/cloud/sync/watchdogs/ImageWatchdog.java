@@ -28,10 +28,7 @@ import com.google.inject.name.Named;
 import components.execution.SimpleBlockingQueue;
 import components.execution.Stable;
 import models.CloudCredential;
-import models.Location;
 import models.service.ImageModelService;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by daniel on 07.05.15.
@@ -58,7 +55,7 @@ import java.util.concurrent.TimeUnit;
                 report(new ImageProblems.ImageNotInDatabase(imageInLocation));
             } else {
                 CloudCredential credentialToSearchFor = null;
-                for (CloudCredential cloudCredential : modelImage.getCloudCredentials()) {
+                for (CloudCredential cloudCredential : modelImage.cloudCredentials()) {
                     if (cloudCredential.getUuid().equals(imageInLocation.credential())) {
                         credentialToSearchFor = cloudCredential;
                         break;
@@ -68,36 +65,8 @@ import java.util.concurrent.TimeUnit;
                 if (credentialToSearchFor == null) {
                     report(new ImageProblems.ImageMissesCredential(imageInLocation));
                 }
-
-                Location locationToSearchFor = null;
-                for (Location location : modelImage.getLocations()) {
-                    if (location.getCloud().getUuid().equals(imageInLocation.cloud()) && location
-                        .getRemoteId().equals(imageInLocation.location())) {
-                        locationToSearchFor = location;
-                        break;
-                    }
-                }
-
-                if (locationToSearchFor == null) {
-                    report(new ImageProblems.ImageMissesLocation(imageInLocation));
-                }
             }
-
-
-
         }
-    }
-
-    @Override public long period() {
-        return 1;
-    }
-
-    @Override public long delay() {
-        return 0;
-    }
-
-    @Override public TimeUnit timeUnit() {
-        return TimeUnit.MINUTES;
     }
 
     @Override public String toString() {

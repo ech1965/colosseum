@@ -25,13 +25,15 @@ import cloud.resources.VirtualMachineInLocation;
 import cloud.strategies.KeyPairStrategy;
 import com.google.common.base.Optional;
 import components.installer.Installers;
-import de.uniulm.omi.cloudiator.sword.api.domain.LoginCredential;
+import components.installer.api.InstallApi;
 import de.uniulm.omi.cloudiator.sword.api.exceptions.KeyPairException;
 import de.uniulm.omi.cloudiator.sword.api.exceptions.PublicIpException;
 import de.uniulm.omi.cloudiator.sword.api.extensions.PublicIpService;
 import de.uniulm.omi.cloudiator.sword.api.remote.RemoteConnection;
+import de.uniulm.omi.cloudiator.sword.api.remote.RemoteException;
 import de.uniulm.omi.cloudiator.sword.core.domain.TemplateOptionsBuilder;
 import models.*;
+import models.generic.RemoteState;
 import models.service.ModelService;
 
 import java.util.HashSet;
@@ -78,9 +80,12 @@ public class CreateVirtualMachineJob extends GenericJob<VirtualMachine> {
             BaseColosseumVirtualMachineTemplate.builder();
         TemplateOptionsBuilder templateOptionsBuilder = TemplateOptionsBuilder.newBuilder();
         if (keyPairOptional.isPresent()) {
-            templateOptionsBuilder.keyPairName(keyPairOptional.get().getRemoteId());
+            templateOptionsBuilder.keyPairName(keyPairOptional.get().cloudProviderId().get());
         }
         templateOptionsBuilder.inboundPorts(RequiredPorts.inBoundPorts());
+        if (virtualMachine.templateOptions().isPresent()) {
+            templateOptionsBuilder.tags(virtualMachine.templateOptions().get().tags());
+        }
         builder.templateOptions(templateOptionsBuilder.build());
 
         // create the virtual machine
@@ -88,24 +93,29 @@ public class CreateVirtualMachineJob extends GenericJob<VirtualMachine> {
             .createVirtualMachine(builder.virtualMachineModel(virtualMachine).build());
 
         // set values to the model
-        virtualMachine.setRemoteId(cloudVirtualMachine.id());
+        virtualMachine.bindRemoteId(cloudVirtualMachine.id());
+        virtualMachine.bindCloudProviderId(cloudVirtualMachine.cloudProviderId());
         for (String ip : cloudVirtualMachine.privateAddresses()) {
             virtualMachine.addIpAddress(new IpAddress(virtualMachine, ip, IpType.PRIVATE));
         }
         for (String ip : cloudVirtualMachine.publicAddresses()) {
             virtualMachine.addIpAddress(new IpAddress(virtualMachine, ip, IpType.PUBLIC));
         }
-        if (cloudVirtualMachine.loginCredential().isPresent()) {
-            LoginCredential loginCredential = cloudVirtualMachine.loginCredential().get();
-            virtualMachine.setGeneratedLoginUsername(loginCredential.username());
-            if (loginCredential.isPasswordCredential()) {
-                virtualMachine.setGeneratedPassword(loginCredential.password().get());
-            } else {
-                //todo: if a private key and a public key are returned, we need to store them
-                throw new UnsupportedOperationException(
-                    "Virtual Machine that started with key credentials is not yet supported.");
-            }
-        }
+
+        //todo we cannot trust the response of sword, as jclouds returns wrong usernames.
+        //fix this in sword. until fixed we do not read the login credentials.
+        //this will cause flexiant jobs to fail....
+        //if (cloudVirtualMachine.loginCredential().isPresent()) {
+        //    LoginCredential loginCredential = cloudVirtualMachine.loginCredential().get();
+        //    virtualMachine.setGeneratedLoginUsername(loginCredential.username());
+        //    if (loginCredential.isPasswordCredential()) {
+        //        virtualMachine.setGeneratedPassword(loginCredential.password().get());
+        //    } else {
+        //        //todo: if a private key and a public key are returned, we need to store them
+        //        throw new UnsupportedOperationException(
+        //            "Virtual Machine that started with key credentials is not yet supported.");
+        //    }
+        //}
 
         modelService.save(virtualMachine);
 
@@ -115,7 +125,7 @@ public class CreateVirtualMachineJob extends GenericJob<VirtualMachine> {
             if (publicIpService.isPresent()) {
                 try {
                     final String publicIp =
-                        publicIpService.get().addPublicIp(virtualMachine.getRemoteId());
+                        publicIpService.get().addPublicIp(virtualMachine.remoteId().get());
                     virtualMachine
                         .addIpAddress(new IpAddress(virtualMachine, publicIp, IpType.PUBLIC));
                 } catch (PublicIpException e) {
@@ -130,7 +140,18 @@ public class CreateVirtualMachineJob extends GenericJob<VirtualMachine> {
         final RemoteConnection remoteConnection =
             computeService.remoteConnection(tenant, virtualMachine);
 
-        Installers.of(remoteConnection, virtualMachine, tenant).installAll();
+        try (InstallApi installApi = Installers.of(remoteConnection, virtualMachine, tenant)) {
+            installApi.installAll();
+        } catch (RemoteException e) {
+            throw new JobException(e);
+        }
+
+        virtualMachine.setRemoteState(RemoteState.OK);
+        modelService.save(virtualMachine);
+    }
+
+    @Override public boolean canStart() {
+        return true;
     }
 
     /**

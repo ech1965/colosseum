@@ -30,14 +30,13 @@ public class DownloadTask implements Callable<Integer> {
     private final RemoteConnection remoteConnection;
     private final String command;
 
-    public DownloadTask(RemoteConnection remoteConnection, String command){
+    public DownloadTask(RemoteConnection remoteConnection, String command) {
         this.remoteConnection = remoteConnection;
         this.command = command;
 
     }
 
-    @Override
-    public Integer call() throws Exception {
-        return this.remoteConnection.executeCommand(this.command);
+    @Override public Integer call() throws Exception {
+        return this.remoteConnection.executeCommand(this.command).getExitStatus();
     }
 }

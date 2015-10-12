@@ -18,28 +18,37 @@
 
 package models;
 
+import com.google.common.collect.ImmutableList;
 import models.generic.Model;
 
+import javax.annotation.Nullable;
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import java.util.List;
+import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by daniel on 11.02.15.
  */
 @Entity public class VirtualMachineTemplate extends Model {
 
+    /**
+     * Owned relations
+     */
+    @ManyToOne(optional = false) private Cloud cloud;
+    @ManyToOne(optional = false) private Image image;
+    @ManyToOne(optional = false) private Location location;
+    @ManyToOne(optional = false) private Hardware hardware;
+    @Nullable @ManyToOne(optional = true) private TemplateOptions templateOptions;
+
+    /**
+     * Foreign relations
+     */
     @OneToMany(mappedBy = "virtualMachineTemplate") private List<ApplicationComponent>
         applicationComponents;
-
-    @ManyToOne(optional = false) private Cloud cloud;
-
-    @ManyToOne(optional = false) private Image image;
-
-    @ManyToOne(optional = false) private Location location;
-
-    @ManyToOne(optional = false) private Hardware hardware;
 
     /**
      * Empty constructor for hibernate.
@@ -47,50 +56,40 @@ import java.util.List;
     protected VirtualMachineTemplate() {
     }
 
-    public VirtualMachineTemplate(Cloud cloud, Image image, Location location, Hardware hardware) {
+    public VirtualMachineTemplate(Cloud cloud, Image image, Location location, Hardware hardware,
+        @Nullable TemplateOptions templateOptions) {
+        checkNotNull(cloud);
         this.cloud = cloud;
+        checkNotNull(image);
         this.image = image;
+        checkNotNull(location);
         this.location = location;
+        checkNotNull(hardware);
         this.hardware = hardware;
+        this.templateOptions = templateOptions;
     }
 
-    public List<ApplicationComponent> getApplicationComponents() {
-        return applicationComponents;
+    public List<ApplicationComponent> getApplicationComponentsUsedFor() {
+        return ImmutableList.copyOf(applicationComponents);
     }
 
-    public void setApplicationComponents(List<ApplicationComponent> applicationComponents) {
-        this.applicationComponents = applicationComponents;
-    }
-
-    public Image getImage() {
+    public Image image() {
         return image;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
-    }
-
-    public Location getLocation() {
+    public Location location() {
         return location;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
-    }
-
-    public Hardware getHardware() {
+    public Hardware hardware() {
         return hardware;
     }
 
-    public void setHardware(Hardware hardware) {
-        this.hardware = hardware;
-    }
-
-    public Cloud getCloud() {
+    public Cloud cloud() {
         return cloud;
     }
 
-    public void setCloud(Cloud cloud) {
-        this.cloud = cloud;
+    public Optional<TemplateOptions> templateOptions() {
+        return Optional.ofNullable(templateOptions);
     }
 }

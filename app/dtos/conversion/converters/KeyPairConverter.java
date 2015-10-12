@@ -33,20 +33,20 @@ import models.service.ModelService;
 public class KeyPairConverter extends AbstractConverter<KeyPair, KeyPairDto> {
 
     private final ModelService<Cloud> cloudModelService;
-    private final ModelService<Tenant> frontendGroupModelService;
+    private final ModelService<Tenant> tenantModelService;
 
     @Inject protected KeyPairConverter(ModelService<Cloud> cloudModelService,
-        ModelService<Tenant> frontendGroupModelService) {
+        ModelService<Tenant> tenantModelService) {
         super(KeyPair.class, KeyPairDto.class);
         this.cloudModelService = cloudModelService;
-        this.frontendGroupModelService = frontendGroupModelService;
+        this.tenantModelService = tenantModelService;
     }
 
     @Override public void configure() {
         binding(Long.class, Cloud.class).fromField("cloud").toField("cloud")
             .withTransformation(new IdToModelTransformer<>(cloudModelService));
-        binding(Long.class, Tenant.class).fromField("frontendGroup").toField("frontendGroup")
-            .withTransformation(new IdToModelTransformer<>(frontendGroupModelService));
+        binding(Long.class, Tenant.class).fromField("tenant").toField("tenant")
+            .withTransformation(new IdToModelTransformer<>(tenantModelService));
         binding().fromField("privateKey").toField("privateKey");
         binding().fromField("publicKey").toField("publicKey");
         binding().fromField("remoteId").toField("remoteId");

@@ -16,15 +16,29 @@
  * under the License.
  */
 
-package models.service;
-
-import models.generic.Resource;
-
-import javax.annotation.Nullable;
+package cloud.strategies;
 
 /**
- * Created by daniel on 08.05.15.
+ * Created by daniel on 22.09.15.
  */
-public interface ResourceRepository<T extends Resource> {
-    @Nullable T findByUuid(String uuid);
+public class RemoteRuntimeException extends RuntimeException {
+    public RemoteRuntimeException() {
+    }
+
+    public RemoteRuntimeException(String message) {
+        super(message);
+    }
+
+    public RemoteRuntimeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RemoteRuntimeException(Throwable cause) {
+        super(cause);
+    }
+
+    public RemoteRuntimeException(String message, Throwable cause, boolean enableSuppression,
+        boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

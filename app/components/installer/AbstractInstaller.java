@@ -25,7 +25,6 @@ import models.VirtualMachine;
 import play.Logger;
 import play.Play;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -44,6 +43,10 @@ abstract class AbstractInstaller implements InstallApi {
 
 
     protected final List<String> sourcesList = new ArrayList<>();
+
+    //parallel download threads
+    private static final int NUMBER_OF_DOWNLOAD_THREADS =
+        Play.application().configuration().getInt("colosseum.installer.download.threads");
 
     //KairosDB
     protected static final String KAIROSDB_ARCHIVE = "kairosdb.tar.gz";
@@ -87,7 +90,7 @@ abstract class AbstractInstaller implements InstallApi {
     @Override public void downloadSources() {
 
         Logger.debug("Start downloading sources...");
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        ExecutorService executorService = Executors.newFixedThreadPool(NUMBER_OF_DOWNLOAD_THREADS);
 
         List<Callable<Integer>> tasks = new ArrayList<>();
 
@@ -106,12 +109,11 @@ abstract class AbstractInstaller implements InstallApi {
                 }
             }
             Logger.debug("All sources downloaded successfully!");
+            executorService.shutdown();
         } catch (InterruptedException e) {
-            Logger.error(e.getMessage());
-            e.printStackTrace();
+            Logger.error("Installer: Interrupted Exception while downloading sources!", e);
         } catch (ExecutionException e) {
-            Logger.error(e.getMessage());
-            e.printStackTrace();
+            Logger.error("Installer: Execution Exception while downloading sources!", e);
         }
 
     }
@@ -154,14 +156,8 @@ abstract class AbstractInstaller implements InstallApi {
 
     }
 
-    public void finishInstallation() {
-
-        Logger.debug("Finished installation of all tools, closing remote connection.");
-        try {
-            this.remoteConnection.close();
-        } catch (IOException ignored) {
-        }
-
+    @Override public void close() {
+        this.remoteConnection.close();
     }
 }
 

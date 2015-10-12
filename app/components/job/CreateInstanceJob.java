@@ -38,6 +38,7 @@ import de.uniulm.omi.cloudiator.lance.lifecycle.LifecycleStore;
 import de.uniulm.omi.cloudiator.lance.lifecycle.LifecycleStoreBuilder;
 import de.uniulm.omi.cloudiator.lance.lifecycle.bash.BashBasedHandlerBuilder;
 import models.*;
+import models.generic.RemoteState;
 import models.service.ModelService;
 
 import javax.annotation.Nullable;
@@ -50,11 +51,13 @@ import static com.google.common.base.Preconditions.checkState;
  */
 public class CreateInstanceJob extends GenericJob<Instance> {
 
+    private final Instance instance;
 
     @Inject public CreateInstanceJob(Instance instance, ModelService<Instance> modelService,
         ModelService<Tenant> tenantModelService, ColosseumComputeService colosseumComputeService,
         Tenant tenant) {
         super(instance, modelService, tenantModelService, colosseumComputeService, tenant);
+        this.instance = instance;
     }
 
     @Override protected void doWork(Instance instance, ModelService<Instance> modelService,
@@ -91,7 +94,9 @@ public class CreateInstanceJob extends GenericJob<Instance> {
 
         client
             .deploy(instance.getVirtualMachine().publicIpAddress().get().getIp(), deploymentContext,
-                buildDeployableComponent(instance), OperatingSystem.UBUNTU_14_04);
+                buildDeployableComponent(instance),
+                instance.getVirtualMachine().operatingSystemVendorTypeOrDefault().lanceOs(),
+                instance.getApplicationComponent().containerTypeOrDefault());
 
         return client;
 
@@ -118,10 +123,13 @@ public class CreateInstanceJob extends GenericJob<Instance> {
         // add all ingoing ports / provided ports
         for (PortProvided portProvided : instance.getApplicationComponent().getProvidedPorts()) {
             PortProperties.PortType portType;
-            if (portProvided.getCommunication() == null) {
+            if (portProvided.getAttachedCommunication() == null) {
                 portType = PortProperties.PortType.PUBLIC_PORT;
             } else {
-                portType = PortProperties.PortType.INTERNAL_PORT;
+                // todo should be internal, but for the time being we use public here
+                // facilitates the security group handling
+                //portType = PortProperties.PortType.INTERNAL_PORT;
+                portType = PortProperties.PortType.PUBLIC_PORT;
             }
             builder.addInport(portProvided.name(), portType, PortProperties.INFINITE_CARDINALITY);
         }
@@ -133,7 +141,8 @@ public class CreateInstanceJob extends GenericJob<Instance> {
         }
 
         //build a lifecycle store from the application component
-        builder.addLifecycleStore(new LifecycleComponentToLifecycleStoreConverter()
+        builder.addLifecycleStore(new LifecycleComponentToLifecycleStoreConverter(
+            instance.getVirtualMachine().operatingSystemVendorTypeOrDefault().lanceOs())
             .apply((LifecycleComponent) instance.getApplicationComponent().getComponent()));
 
         return builder.build();
@@ -151,17 +160,27 @@ public class CreateInstanceJob extends GenericJob<Instance> {
         }
         for (PortRequired portRequired : instance.getApplicationComponent().getRequiredPorts()) {
             deploymentContext.setProperty(portRequired.name(), new PortReference(ComponentId
-                .fromString(
-                    portRequired.getCommunication().getProvidedPort().getApplicationComponent()
-                        .getUuid()), portRequired.getCommunication().getProvidedPort().name(),
+                .fromString(portRequired.getAttachedCommunication().getProvidedPort()
+                    .getApplicationComponent().getUuid()),
+                portRequired.getAttachedCommunication().getProvidedPort().name(),
                 PortProperties.PortLinkage.ALL), OutPort.class);
         }
 
         return deploymentContext;
     }
 
+    @Override public boolean canStart() {
+        return RemoteState.OK.equals(instance.getVirtualMachine().getRemoteState());
+    }
+
     private static class LifecycleComponentToLifecycleStoreConverter
         implements OneWayConverter<LifecycleComponent, LifecycleStore> {
+
+        private final OperatingSystem os;
+
+        public LifecycleComponentToLifecycleStoreConverter(OperatingSystem os) {
+            this.os = os;
+        }
 
         private Map<LifecycleHandlerType, String> buildCommandMap(LifecycleComponent lc) {
             Map<LifecycleHandlerType, String> commands = Maps.newHashMap();
@@ -203,7 +222,7 @@ public class CreateInstanceJob extends GenericJob<Instance> {
             for (Map.Entry<LifecycleHandlerType, String> entry : buildCommandMap(lc).entrySet()) {
                 final BashBasedHandlerBuilder bashBasedHandlerBuilder =
                     new BashBasedHandlerBuilder();
-                bashBasedHandlerBuilder.setOperatingSystem(OperatingSystem.UBUNTU_14_04);
+                bashBasedHandlerBuilder.setOperatingSystem(os);
                 bashBasedHandlerBuilder.addCommand(entry.getValue());
                 final LifecycleHandler lifecycleHandler =
                     bashBasedHandlerBuilder.build(entry.getKey());

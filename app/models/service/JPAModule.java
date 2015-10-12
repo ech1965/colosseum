@@ -55,6 +55,10 @@ public class JPAModule extends AbstractModule {
         bind(new TypeLiteral<ModelRepository<CloudCredential>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<CloudCredential>>() {
         });
+        // Cloud Property
+        bind(new TypeLiteral<ModelRepository<CloudProperty>>() {
+        }).to(new TypeLiteral<BaseModelRepositoryJpa<CloudProperty>>() {
+        });
         // Communication
         bind(new TypeLiteral<ModelRepository<Communication>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<Communication>>() {
@@ -113,8 +117,8 @@ public class JPAModule extends AbstractModule {
         bind(new TypeLiteral<ModelRepository<Image>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<Image>>() {
         });
-        bind(new TypeLiteral<RemoteModelRepository<Image>>() {
-        }).to(new TypeLiteral<BaseRemoteModelRepositoryJpa<Image>>() {
+        bind(new TypeLiteral<RemoteResourceRepository<Image>>() {
+        }).to(new TypeLiteral<BaseRemoteResourceRepositoryJpa<Image>>() {
         });
         //Instance
         bind(new TypeLiteral<ModelRepository<Instance>>() {
@@ -152,8 +156,8 @@ public class JPAModule extends AbstractModule {
         bind(new TypeLiteral<ModelRepository<MonitorSubscription>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<MonitorSubscription>>() {
         });
-        bind(new TypeLiteral<RemoteModelRepository<Location>>() {
-        }).to(new TypeLiteral<BaseRemoteModelRepositoryJpa<Location>>() {
+        bind(new TypeLiteral<RemoteResourceRepository<Location>>() {
+        }).to(new TypeLiteral<BaseRemoteResourceRepositoryJpa<Location>>() {
         });
         //Operating System
         bind(new TypeLiteral<ModelRepository<OperatingSystem>>() {
@@ -178,6 +182,10 @@ public class JPAModule extends AbstractModule {
         //SensorDescription
         bind(new TypeLiteral<ModelRepository<SensorDescription>>() {
         }).to(new TypeLiteral<BaseModelRepositoryJpa<SensorDescription>>() {
+        });
+        //TemplateOptions
+        bind(new TypeLiteral<ModelRepository<TemplateOptions>>() {
+        }).to(new TypeLiteral<BaseModelRepositoryJpa<TemplateOptions>>() {
         });
         //TimeWindow
         bind(new TypeLiteral<ModelRepository<TimeWindow>>() {

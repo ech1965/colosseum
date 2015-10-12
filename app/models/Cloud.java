@@ -18,28 +18,31 @@
 
 package models;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Maps;
 import models.generic.Model;
+import models.generic.RemoteResourceInCloud;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity public class Cloud extends Model {
 
-    @Column(unique = true, nullable = false) private String name;
+    @Column(unique = true, nullable = false, updatable = false) private String name;
     @Column(nullable = false) private String endpoint;
     @ManyToOne(optional = false) private Api api;
-    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<Image> images;
-    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<Location> locations;
-    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<Hardware> hardware;
+    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<RemoteResourceInCloud>
+        remoteResources;
     @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE)
     private List<VirtualMachineTemplate> virtualMachineTemplates;
-    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<VirtualMachine>
-        virtualMachines;
     @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<CloudCredential>
         cloudCredentials;
+    @OneToMany(mappedBy = "cloud", cascade = CascadeType.REMOVE) private List<CloudProperty>
+        cloudProperties;
 
     /**
      * Empty constructor. Needed by hibernate.
@@ -74,59 +77,31 @@ import static com.google.common.base.Preconditions.checkNotNull;
         this.endpoint = endpoint;
     }
 
-    public Api getApi() {
+    public Api api() {
         return api;
     }
 
-    public void setApi(Api api) {
-        this.api = api;
+    public List<RemoteResourceInCloud> remoteResources() {
+        return ImmutableList.copyOf(remoteResources);
     }
 
-    public List<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(List<Image> images) {
-        this.images = images;
-    }
-
-    public List<Location> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
-    }
-
-    public List<Hardware> getHardware() {
-        return hardware;
-    }
-
-    public void setHardware(List<Hardware> hardware) {
-        this.hardware = hardware;
-    }
-
-    public List<VirtualMachineTemplate> getVirtualMachineTemplates() {
-        return virtualMachineTemplates;
-    }
-
-    public void setVirtualMachineTemplates(List<VirtualMachineTemplate> virtualMachineTemplates) {
-        this.virtualMachineTemplates = virtualMachineTemplates;
-    }
-
-    public List<VirtualMachine> getVirtualMachines() {
-        return virtualMachines;
-    }
-
-    public void setVirtualMachines(List<VirtualMachine> virtualMachines) {
-        this.virtualMachines = virtualMachines;
+    public void setRemoteResources(List<RemoteResourceInCloud> remoteResources) {
+        this.remoteResources = remoteResources;
     }
 
     public List<CloudCredential> getCloudCredentials() {
-        return cloudCredentials;
+        return ImmutableList.copyOf(cloudCredentials);
     }
 
-    public void setCloudCredentials(List<CloudCredential> cloudCredentials) {
-        this.cloudCredentials = cloudCredentials;
+    public void addProperty(CloudProperty cloudProperty) {
+        this.cloudProperties.add(cloudProperty);
+    }
+
+    public Map<String, String> properties() {
+        Map<String, String> resultMap = Maps.newHashMapWithExpectedSize(cloudProperties.size());
+        for (CloudProperty cloudProperty : cloudProperties) {
+            resultMap.put(cloudProperty.key(), cloudProperty.value());
+        }
+        return resultMap;
     }
 }
